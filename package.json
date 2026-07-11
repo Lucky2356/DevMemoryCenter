@@ -6,11 +6,12 @@
     "apps/desktop"
   ],
   "scripts": {
-    "format": "prettier --write .github/workflows/ci.yml package.json eslint.config.mjs apps/desktop/package.json apps/desktop/index.html apps/desktop/tsconfig.json apps/desktop/vite.config.ts apps/desktop/src",
-    "format:check": "prettier --check .github/workflows/ci.yml package.json eslint.config.mjs apps/desktop/package.json apps/desktop/index.html apps/desktop/tsconfig.json apps/desktop/vite.config.ts apps/desktop/src",
-    "lint": "eslint apps/desktop/src apps/desktop/vite.config.ts",
+    "format": "prettier --write .github/**/*.yml .github/**/*.md package.json eslint.config.mjs scripts apps/desktop/package.json apps/desktop/index.html apps/desktop/tsconfig.json apps/desktop/vite.config.ts apps/desktop/src",
+    "format:check": "prettier --check .github/**/*.yml .github/**/*.md package.json eslint.config.mjs scripts apps/desktop/package.json apps/desktop/index.html apps/desktop/tsconfig.json apps/desktop/vite.config.ts apps/desktop/src",
+    "lint": "node --check scripts/secret-scan.mjs && node --check scripts/secret-scan.test.mjs && eslint apps/desktop/src apps/desktop/vite.config.ts",
     "typecheck": "npm run typecheck --workspace @dev-recall/desktop",
-    "test": "npm run test --workspace @dev-recall/desktop",
+    "test": "node --test scripts/*.test.mjs && npm run test --workspace @dev-recall/desktop",
+    "security:secrets": "node scripts/secret-scan.mjs",
     "build": "npm run build --workspace @dev-recall/desktop",
     "tauri": "tauri"
   },

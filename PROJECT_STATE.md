@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added bounded privacy-safe structured local logging with rotation, retention, clearing, and Tauri ownership.
+Added bounded fail-closed repository and reachable-history secret scanning with regression tests and a full-history CI gate.
 
 ## Work in progress
 
-None. The logger is managed by the desktop application but emits no event before onboarding consent.
+None. The repository scanner and GitHub governance metadata are ready for the owner-authorized first push.
 
 ## Completed
 
@@ -53,10 +53,14 @@ None. The logger is managed by the desktop application but emits no event before
 - Added synchronous mutex-serialized writes with no background task, a 1 MiB active file, five archives, seven-day retention, bounded custom limits, oversized/excess archive cleanup, and explicit clearing.
 - Added fixed application-data log paths, non-file/symlink rejection, `0700`/`0600` Unix permissions, sanitized typed errors, and tests for concurrent writers, rotation, retention, bounds, clearing, and unsafe targets.
 - Added ADR-0013 and connected logger ownership to the Tauri composition root without emitting pre-consent events.
+- Added a dependency-free Node.js repository scanner for private keys, common platform tokens, JWT-like values, Basic Auth URLs, and likely assigned secrets.
+- Added fail-closed limits for file/blob size, file/blob count, total bytes, and Git enumeration output; working-tree symlinks are scanned as link text without following them.
+- Added regression tests for synthetic credentials, safe placeholders, deleted-but-reachable history, oversized files, and Windows path normalization.
+- Added a minimal-permission full-history CI job plus CODEOWNERS, structured non-sensitive issue forms, a security-focused pull-request checklist, and controlled weekly Dependabot configuration.
 
 ## Tests passed
 
-- `npm run test`: 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
+- `npm run test`: 4 repository-security tests and 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
 - `cargo test --workspace --all-features`: 25 Rust unit tests passed; doc tests passed.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
@@ -68,7 +72,7 @@ None. The logger is managed by the desktop application but emits no event before
 ## Checks not run
 
 - Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
-- The GitHub-hosted workflow itself has not run because no push was authorized; workflow success on both runner images remains externally unverified.
+- The new repository-security job has not run on GitHub before this commit; its local equivalent passed. Verify the owner-authorized pushed run before treating the hosted gate as proven.
 
 ## Security checks passed
 
@@ -93,6 +97,9 @@ None. The logger is managed by the desktop application but emits no event before
 - Observability regression tests verify fixed-schema valid JSON, no arbitrary string context surface, bounded metrics/files/archives, serialized concurrent writes, startup retention, oversized/excess cleanup, explicit clearing, and unsafe path rejection.
 - The desktop composition root emits no log event before onboarding consent; current startup creates only an empty local log file and performs bounded retention maintenance.
 - The observability crate adds no production dependency, network access, shell/process capability, background thread, unbounded queue, or raw error logging.
+- `npm run security:secrets` passed over the current repository and every blob reachable from local refs without printing candidate values or paths.
+- Secret-scanner regression tests verify historical detection after working-tree deletion and fail-closed handling when configured limits are exceeded.
+- CI uses a full-history checkout only for the isolated repository-security job, keeps `contents: read`, and persists no checkout credentials.
 
 ## Performance measurements
 
@@ -101,13 +108,14 @@ None. The logger is managed by the desktop application but emits no event before
 - The pool permits at most four SQLite worker connections, keeps zero minimum idle connections, and bounds command buffers at 32, row buffers at 128, and statement caches at 64 per connection.
 - The persistence crate is not linked into the desktop package, so it adds no current desktop runtime threads or binary payload. Re-measure when the composition root begins owning a database.
 - Focused observability tests completed in approximately 0.04 seconds on Windows. The default log budget is approximately 6 MiB across one active file and five archives, with no idle polling or background worker.
+- The bounded repository and reachable-history scan completed locally in approximately 0.8 seconds for the current repository after switching historical reads to one validated Git batch operation.
 
 ## Known issues
 
 - Global `cargo-tauri` is not installed; the verified repository-local npm CLI is used.
 - Linux prerequisites and builds remain unverified from this Windows host.
 - The application currently has only the foundation status screen; all MVP features remain planned.
-- CI remains unverified on GitHub until an explicitly authorized push triggers it.
+- No successful GitHub-hosted CI run is recorded before this commit; the owner-authorized post-commit push must be monitored on both runner platforms.
 - Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
 - Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
 - Theme selection is in-memory only and intentionally resets to the system preference until an approved local settings store exists.
@@ -118,6 +126,8 @@ None. The logger is managed by the desktop application but emits no event before
 - SQLx's disabled optional MySQL backend records an RSA advisory in `Cargo.lock`; the backend is absent from the active graph and the exact audit exception must not be broadened.
 - Logger consent, configurable retention, and clearing are not yet exposed in Privacy & Data UI; until consent state exists, the runtime intentionally emits no events.
 - Windows log permissions inherit the application-data ACL and still require representative packaged permission verification; Unix creation and fail-closed permission checks are covered by code/tests.
+- Repository secret detection is heuristic and cannot prove absence of unknown, encoded, fragmented, or unrecognized credential formats; GitHub push protection is configured separately when supported.
+- Scanner limits intentionally fail closed as history grows and must be reviewed rather than bypassed if the repository approaches them.
 
 ## Security findings
 
@@ -126,17 +136,16 @@ None. The logger is managed by the desktop application but emits no event before
 ## Decisions required
 
 - Repository license selection.
-- Clarify whether the GitHub publication restriction permits the `FUTURE_AI.md` product-boundary document required by `SPEC.md`.
 
-Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local development. No push or publication is authorized.
+The remaining decision is documented in `NEEDS_USER_INPUT.md`. Owner-authorized repository publication may proceed under the temporary all-rights-reserved notice, but external contributions and releases remain blocked.
 
 ## Next task
 
-Add bounded repository and history secret scanning.
+Add application-owned background-operation lifecycle and shutdown tests.
 
 ## Last stable commit
 
-`10646eb` (`security: add Rust dependency audit gates`) is the stable baseline preceding this work unit.
+`bae5f31` (`feat: add bounded local observability`) is the stable baseline preceding this work unit.
 
 ## Commands to verify
 
@@ -148,6 +157,7 @@ npm run typecheck
 npm run test
 npm run build
 npm audit --audit-level=high
+npm run security:secrets
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-features

@@ -16,11 +16,12 @@ The current desktop foundation collects and persists no user data. It exposes on
 - Reconstruct outbound IPC payloads from validated fields, reject unexpected successful-response fields, and replace unrecognized errors instead of stringifying them.
 - Use parameterized SQL, migrations, foreign keys, constraints, and bounded connections.
 - Use the closed structured-event API for local logs with rotation/retention; arbitrary string context, commands, secrets, notes, source, headers, cookies, environment dumps, and paths are not accepted.
+- Fail closed on repository or reachable-history secret candidates and scan bounds before publication; never print candidate values or paths.
 - Own and cancel every background task; bound queues and caches.
 
 ## Vulnerability reporting
 
-Do not put secrets or personal command history in reports. Record repository findings in `SECURITY_FINDINGS.md` only when a concrete issue exists. Critical and High findings block feature work.
+Do not put secrets or personal command history in reports. Use GitHub private security advisories when the repository is hosted there; public issue forms direct suspected vulnerabilities to that private channel. Record repository findings in `SECURITY_FINDINGS.md` only when a concrete issue exists. Critical and High findings block feature work.
 
 ## Dependency and release security
 

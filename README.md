@@ -4,7 +4,7 @@
 
 Local memory for developers and system administrators.
 
-Dev Recall is a planned local-first desktop application for restoring context around local development work. The repository currently contains the Phase 0 architecture and a minimal application foundation only; MVP features are not implemented yet.
+Dev Recall is a planned local-first desktop application for restoring context around local development work. The repository currently contains the completed Phase 0 architecture and an actively developed Phase 1 application foundation; MVP workflow features are not implemented yet.
 
 ## Current state
 
@@ -17,6 +17,10 @@ Dev Recall is a planned local-first desktop application for restoring context ar
 ## Development
 
 See [docs/development/BUILDING.md](docs/development/BUILDING.md), [docs/development/LOCALIZATION.md](docs/development/LOCALIZATION.md), and [docs/development/UI_FOUNDATION.md](docs/development/UI_FOUNDATION.md). Security and privacy constraints are described in [SECURITY.md](SECURITY.md), [THREAT_MODEL.md](THREAT_MODEL.md), and [PRIVACY.md](PRIVACY.md).
+
+## Repository security
+
+CI validates Windows and Linux builds, frontend and Rust quality gates, dependency policy, and bounded full-history secret scanning. Contributions use CODEOWNERS review, structured issue forms, a security-focused pull-request checklist, and controlled weekly Dependabot updates. See [repository secret scanning](docs/security/REPOSITORY_SECRET_SCANNING.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

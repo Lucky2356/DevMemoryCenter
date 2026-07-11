@@ -1,0 +1,47 @@
+name: Scoped feature proposal
+description: Propose an improvement that stays within SPEC.md and the current project phase.
+title: "proposal: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: Dev Recall is developed phase by phase. Proposals involving cloud sync, remote administration, command execution, surveillance, or elevated privileges are outside the MVP scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the developer workflow problem without including private project data.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest deterministic, local-first behavior that solves it.
+    validations:
+      required: true
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Privacy and security considerations
+      description: What data would be read, retained, displayed, or deleted?
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Related phase
+      options:
+        - Phase 1 — Application foundation
+        - Phase 2 — Local projects
+        - Phase 3 — Terminal Memory import
+        - Phase 4 — Search
+        - Phase 5 — Work sessions
+        - Phase 6 — Timeline
+        - Phase 7 — Favorites
+        - Phase 8 — Privacy Center
+        - Phase 9 — Optional local context
+        - Phase 10 — Hardening
+    validations:
+      required: true
