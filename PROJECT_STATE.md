@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added responsive, localized, keyboard-accessible application navigation and a shared renderer for loading, empty, normal, error, and disabled screen states.
+Added localized system, light, and dark application themes with a bounded native selector and reduced-motion behavior.
 
 ## Work in progress
 
-None. The navigation task is complete; the next Phase 1 task has not started.
+None. The theme task is complete; the next Phase 1 task has not started.
 
 ## Completed
 
@@ -30,13 +30,17 @@ None. The navigation task is complete; the next Phase 1 task has not started.
 - Added the eight `SPEC.md` navigation sections using bounded route identifiers and native keyboard controls.
 - Added a skip link, visible focus, semantic landmarks, current-page state, polite content announcements, and responsive small-window layout.
 - Added localized screen descriptions and honest shared loading, empty, normal, error, and disabled state semantics.
+- Added a typed three-value theme preference with system as the default and explicit light/dark overrides.
+- Added localized native radio controls, semantic palette tokens, native-control color schemes, and reduced-motion transition suppression.
 
 ## Tests passed
 
-- `npm run test`: 16 localization and application-shell component tests passed.
+- `npm run test`: 19 localization and application-shell component tests passed.
 - `cargo test --workspace --all-features`: 5 Rust unit tests passed; doc tests passed.
-- `npm ci --ignore-scripts`: locked dependency installation completed without lifecycle scripts.
-- Local browser QA passed for Russian rendering, navigation changes, skip-link focus, disabled-state messaging, and the 640-pixel responsive layout.
+- `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
+- `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
+- `npm run tauri -- info` and the Windows Tauri debug build passed.
+- Local browser QA passed for the localized system selector, interactive light/dark switching, and distinct computed palette colors.
 
 ## Checks not run
 
@@ -53,10 +57,11 @@ None. The navigation task is complete; the next Phase 1 task has not started.
 - CI workflow review confirmed top-level `contents: read`, non-persisted checkout credentials, full 40-character action SHAs, no cache, no secrets, no artifact upload, and no publish/release step.
 - Localization review confirmed no remote locale loading, no persistence or transmission of language preferences, no unsafe HTML fallback, and no internal Tauri error exposure.
 - UI review confirmed bounded navigation state, text-only rendering, no IPC/network/storage behavior, and accessible loading/error/disabled semantics.
+- Theme review confirmed bounded state, no storage/network/IPC behavior, native keyboard controls, and reduced-motion handling for presentation transitions.
 
 ## Performance measurements
 
-- Frontend production build completed in approximately 0.2 seconds; output was 198.48 kB JavaScript (63.05 kB gzip) and 3.59 kB CSS (1.34 kB gzip) after the navigation shell was added.
+- Frontend production build completed in approximately 0.3 seconds; output was 199.33 kB JavaScript (63.33 kB gzip) and 4.89 kB CSS (1.57 kB gzip) after theme support was added.
 - No runtime/idle measurement was taken; the skeleton is not an MVP and initial acceptance budgets remain in `docs/performance/PERFORMANCE_BUDGETS.md`.
 
 ## Known issues
@@ -68,10 +73,11 @@ None. The navigation task is complete; the next Phase 1 task has not started.
 - CI remains unverified on GitHub until an explicitly authorized push triggers it.
 - Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
 - Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
+- Theme selection is in-memory only and intentionally resets to the system preference until an approved local settings store exists.
 
 ## Security findings
 
-No concrete vulnerability found in the initial documentation-only repository.
+No concrete vulnerability is known in the current repository.
 
 ## Decisions required
 
@@ -82,11 +88,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Add explicit light, dark, and system theme support with a user-selectable, reduced-motion-aware presentation boundary.
+Define typed sanitized application errors and the first narrow IPC health command with runtime limits.
 
 ## Last stable commit
 
-`HEAD` after the navigation commit (`feat: add accessible application shell navigation`).
+`HEAD` after the theme commit (`feat: add application theme preferences`).
 
 ## Commands to verify
 

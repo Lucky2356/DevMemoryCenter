@@ -11,6 +11,12 @@ export const ru = {
   skipToContent: "Перейти к основному содержимому",
   primaryNavigation: "Основная навигация",
   applicationStatus: "Состояние приложения",
+  themeLabel: "Тема",
+  themes: {
+    system: "Системная",
+    light: "Светлая",
+    dark: "Тёмная",
+  },
   navigation: {
     overview: "Обзор",
     projects: "Проекты",

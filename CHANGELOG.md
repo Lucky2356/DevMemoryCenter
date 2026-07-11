@@ -9,3 +9,4 @@ All notable changes will be documented here. The project has no release yet.
 - Added read-only, SHA-pinned Windows and Linux continuous integration checks.
 - Added typed English/Russian resources and locale-aware shell formatting.
 - Added accessible localized application navigation and shared screen states.
+- Added localized system, light, and dark theme controls with reduced-motion behavior.

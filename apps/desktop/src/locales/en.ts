@@ -11,6 +11,12 @@ export const en = {
   skipToContent: "Skip to main content",
   primaryNavigation: "Primary navigation",
   applicationStatus: "Application status",
+  themeLabel: "Theme",
+  themes: {
+    system: "System",
+    light: "Light",
+    dark: "Dark",
+  },
   navigation: {
     overview: "Overview",
     projects: "Projects",

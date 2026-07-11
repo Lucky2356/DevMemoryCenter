@@ -1,4 +1,8 @@
-import type { NavigationId, ScreenStateKind } from "../models/app-shell";
+import type {
+  NavigationId,
+  ScreenStateKind,
+  ThemePreference,
+} from "../models/app-shell";
 
 export type PluralCategory = "one" | "few" | "many" | "other";
 
@@ -17,6 +21,8 @@ export interface Messages {
   readonly skipToContent: string;
   readonly primaryNavigation: string;
   readonly applicationStatus: string;
+  readonly themeLabel: string;
+  readonly themes: Readonly<Record<ThemePreference, string>>;
   readonly navigation: Readonly<Record<NavigationId, string>>;
   readonly screenDescriptions: Readonly<Record<NavigationId, string>>;
   readonly screenStates: Readonly<Record<ScreenStateKind, StateMessage>>;

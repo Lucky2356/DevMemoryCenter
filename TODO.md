@@ -6,13 +6,12 @@ Phase 1 — Application foundation
 
 ### In progress
 
-None. The accessible application navigation task is complete.
+None. The application theme task is complete.
 
 ### Ready
 
 #### Phase 1 — Application foundation
 
-- [ ] Add light, dark, and system theme support with reduced-motion behavior.
 - [ ] Define typed sanitized application errors and the first narrow IPC health command with runtime limits.
 - [ ] Compare maintained SQLite Rust drivers and document the selected dependency.
 - [ ] Add the bounded SQLite connection setup and immutable initial migration.
@@ -107,3 +106,4 @@ None. The accessible application navigation task is complete.
 - [x] Add read-only Windows/Linux CI with fixed runner images, full-SHA-pinned actions, locked dependency installation, frontend/Rust checks, npm audit, and Tauri debug builds.
 - [x] Add typed English/Russian locale resources, preference resolution, locale-aware number/date/duration formatting, localized document metadata, and localized safe startup failures.
 - [x] Add responsive localized navigation, keyboard skip/focus support, and shared loading, empty, normal, error, and disabled screen states.
+- [x] Add localized light, dark, and system theme controls with reduced-motion behavior.

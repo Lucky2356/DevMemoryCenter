@@ -28,6 +28,28 @@ describe("application shell", () => {
     expect(markup).toContain("Not available yet");
   });
 
+  it("defaults to the system theme and renders localized theme controls", () => {
+    const markup = renderToStaticMarkup(<App locale="ru" />);
+
+    expect(markup).toContain('data-theme="system"');
+    expect(markup).toContain("Системная");
+    expect(markup).toContain("Светлая");
+    expect(markup).toContain("Тёмная");
+    expect(markup).toContain('name="theme"');
+  });
+
+  it.each(["light", "dark"] as const)(
+    "accepts the %s theme as a bounded initial preference",
+    (initialTheme) => {
+      const markup = renderToStaticMarkup(
+        <App locale="en" initialTheme={initialTheme} />,
+      );
+
+      expect(markup).toContain(`data-theme="${initialTheme}"`);
+      expect(markup).toContain(`checked="" value="${initialTheme}"`);
+    },
+  );
+
   it.each<ScreenStateKind>(["loading", "empty", "normal", "error", "disabled"])(
     "renders the %s state",
     (state) => {

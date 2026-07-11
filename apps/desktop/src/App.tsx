@@ -3,13 +3,16 @@ import { useState } from "react";
 import {
   navigationLabel,
   screenDescription,
+  themeLabel,
   translate,
   type SupportedLocale,
 } from "./i18n";
 import {
   navigationIds,
+  themePreferences,
   type NavigationId,
   type ScreenStateKind,
+  type ThemePreference,
 } from "./models/app-shell";
 import { ScreenStatePanel } from "./ScreenStatePanel";
 import styles from "./App.module.css";
@@ -17,6 +20,7 @@ import styles from "./App.module.css";
 interface AppProps {
   readonly locale: SupportedLocale;
   readonly initialRoute?: NavigationId;
+  readonly initialTheme?: ThemePreference;
 }
 
 const screenStates: Readonly<Record<NavigationId, ScreenStateKind>> = {
@@ -30,11 +34,17 @@ const screenStates: Readonly<Record<NavigationId, ScreenStateKind>> = {
   settings: "normal",
 };
 
-export function App({ locale, initialRoute = "overview" }: AppProps) {
+export function App({
+  locale,
+  initialRoute = "overview",
+  initialTheme = "system",
+}: AppProps) {
   const [activeRoute, setActiveRoute] = useState<NavigationId>(initialRoute);
+  const [themePreference, setThemePreference] =
+    useState<ThemePreference>(initialTheme);
 
   return (
-    <div className={styles.app}>
+    <div className={styles.app} data-theme={themePreference}>
       <a className={styles.skipLink} href="#main-content">
         {translate(locale, "skipToContent")}
       </a>
@@ -66,6 +76,26 @@ export function App({ locale, initialRoute = "overview" }: AppProps) {
             })}
           </ul>
         </nav>
+
+        <fieldset className={styles.themePicker}>
+          <legend className={styles.themeLegend}>
+            {translate(locale, "themeLabel")}
+          </legend>
+          <div className={styles.themeOptions}>
+            {themePreferences.map((preference) => (
+              <label className={styles.themeOption} key={preference}>
+                <input
+                  type="radio"
+                  name="theme"
+                  value={preference}
+                  checked={themePreference === preference}
+                  onChange={() => setThemePreference(preference)}
+                />
+                <span>{themeLabel(locale, preference)}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
       </aside>
 
       <main
