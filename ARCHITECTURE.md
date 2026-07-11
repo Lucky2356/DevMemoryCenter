@@ -84,6 +84,10 @@ Raw terminal commands must never be logged, persisted to temporary files, includ
 
 Long operations have one owner, bounded queues and concurrency, progress, cancellation, explicit shutdown, and recoverable checkpoints. No detached tasks or high-frequency polling are allowed.
 
+## Localization
+
+English and Russian resources are compiled into the application; no locale bundle is downloaded at runtime. The presentation layer resolves browser preferences and formats locale-sensitive values with platform `Intl` support. A small Rust boundary embeds localized safe startup errors for failures that occur before the webview exists. Unsupported locales fail predictably to English, and reusable components do not contain user-facing fallback strings.
+
 ## Architecture risks
 
 - History formats omit working directory, exit status, and timestamps; missing metadata must remain explicit.

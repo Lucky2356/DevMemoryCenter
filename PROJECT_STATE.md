@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added Windows/Linux continuous integration with minimal repository permissions, full-SHA-pinned actions, locked dependency installation, frontend/Rust checks, npm audit, and Tauri debug builds.
+Completed the English/Russian localization foundation for the application shell and pre-webview startup failures.
 
 ## Work in progress
 
-None. The CI task is complete; the next Phase 1 task has not started.
+None. The localization task is complete; the next Phase 1 task has not started.
 
 ## Completed
 
@@ -24,11 +24,14 @@ None. The CI task is complete; the next Phase 1 task has not started.
 - Generated local placeholder application icons required by the Windows resource build.
 - Added `.github/workflows/ci.yml` for fixed Ubuntu 24.04 and Windows 2025 runners with no publishing or artifact upload.
 - Added a visible CI status badge and documented CI security/update policy.
+- Moved frontend shell strings into typed English/Russian resource modules.
+- Added ordered locale resolution, document language/title application, and `Intl` number/date/duration formatting with plural rules and invalid-duration rejection.
+- Added embedded English/Russian Rust resources for safe startup failures without exposing internal Tauri errors.
 
 ## Tests passed
 
-- `npm run test`: 3 localization tests passed.
-- `cargo test --workspace --all-features`: 1 Rust unit test passed; doc tests passed.
+- `npm run test`: 8 localization tests passed.
+- `cargo test --workspace --all-features`: 5 Rust unit tests passed; doc tests passed.
 - `npm ci --ignore-scripts`: locked dependency installation completed without lifecycle scripts.
 
 ## Checks not run
@@ -44,10 +47,11 @@ None. The CI task is complete; the next Phase 1 task has not started.
 - `npm audit --audit-level=high`: zero known vulnerabilities.
 - Source review found no `unsafe`, shell plugin, generic IPC command, remote content, user-data persistence, or unsafe React HTML in the skeleton.
 - CI workflow review confirmed top-level `contents: read`, non-persisted checkout credentials, full 40-character action SHAs, no cache, no secrets, no artifact upload, and no publish/release step.
+- Localization review confirmed no remote locale loading, no persistence or transmission of language preferences, no unsafe HTML fallback, and no internal Tauri error exposure.
 
 ## Performance measurements
 
-- Frontend production build completed in approximately 0.2 seconds after dependency installation; output was 192.04 kB JavaScript (60.83 kB gzip) and 1.18 kB CSS (0.59 kB gzip).
+- Frontend production build completed in approximately 0.2 seconds; output was 192.56 kB JavaScript (61.02 kB gzip) and 1.18 kB CSS (0.59 kB gzip) after localization resources were added.
 - No runtime/idle measurement was taken; the skeleton is not an MVP and initial acceptance budgets remain in `docs/performance/PERFORMANCE_BUDGETS.md`.
 
 ## Known issues
@@ -57,6 +61,7 @@ None. The CI task is complete; the next Phase 1 task has not started.
 - `cargo-audit` and `cargo-deny` are unavailable and were not installed automatically.
 - The application currently has only the foundation status screen; all MVP features remain planned.
 - CI remains unverified on GitHub until an explicitly authorized push triggers it.
+- Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
 
 ## Security findings
 
@@ -71,11 +76,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Complete the existing English/Russian localization foundation and ensure every application-shell string, including the document title and startup failure message, is supplied through an appropriate locale-aware boundary.
+Add accessible application navigation with localized loading, empty, normal, error, and disabled states.
 
 ## Last stable commit
 
-`HEAD` after the CI commit (`ci: add Windows and Linux quality gates`).
+`HEAD` after the localization commit (`feat: complete application localization foundation`).
 
 ## Commands to verify
 

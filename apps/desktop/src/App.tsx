@@ -1,9 +1,11 @@
-import { resolveLocale, translate } from "./i18n";
+import { translate, type SupportedLocale } from "./i18n";
 import styles from "./App.module.css";
 
-export function App() {
-  const locale = resolveLocale(navigator.language);
+interface AppProps {
+  readonly locale: SupportedLocale;
+}
 
+export function App({ locale }: AppProps) {
   return (
     <main className={styles.shell}>
       <section className={styles.panel} aria-labelledby="foundation-title">

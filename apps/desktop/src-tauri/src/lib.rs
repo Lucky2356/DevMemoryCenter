@@ -1,5 +1,7 @@
 #![deny(unsafe_code)]
 
+pub mod localization;
+
 pub const APP_NAME: &str = "Dev Recall";
 
 pub fn run() -> Result<(), tauri::Error> {

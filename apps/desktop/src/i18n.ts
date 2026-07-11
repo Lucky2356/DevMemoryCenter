@@ -1,32 +1,99 @@
+import { en } from "./locales/en";
+import { ru } from "./locales/ru";
+import type { Messages, PluralCategory } from "./locales/types";
+
 export const supportedLocales = ["en", "ru"] as const;
 
 export type SupportedLocale = (typeof supportedLocales)[number];
 
-const messages = {
-  en: {
-    productName: "Dev Recall",
-    tagline: "Local memory for developers and system administrators",
-    foundationTitle: "The secure foundation is ready",
-    foundationBody:
-      "This is the initial application shell. It does not collect, import, store, or transmit work data.",
-    phaseLabel: "Current phase: research and architecture",
-  },
-  ru: {
-    productName: "Dev Recall",
-    tagline: "Локальная память для разработчиков и системных администраторов",
-    foundationTitle: "Безопасная основа готова",
-    foundationBody:
-      "Это начальный каркас приложения. Он не собирает, не импортирует, не хранит и не передаёт рабочие данные.",
-    phaseLabel: "Текущий этап: исследование и проектирование",
-  },
-} as const;
+const resources: Readonly<Record<SupportedLocale, Messages>> = { en, ru };
 
-export type MessageKey = keyof (typeof messages)["en"];
+const languageTags: Readonly<Record<SupportedLocale, string>> = {
+  en: "en-US",
+  ru: "ru-RU",
+};
+
+const pluralCategories: readonly PluralCategory[] = [
+  "one",
+  "few",
+  "many",
+  "other",
+];
+
+export type MessageKey = Exclude<keyof Messages, "durationMinutes">;
+
+function tryResolveLocale(language: string): SupportedLocale | undefined {
+  const normalized = language.trim().toLowerCase();
+
+  if (/^ru(?:[-_.@]|$)/u.test(normalized)) {
+    return "ru";
+  }
+
+  if (/^en(?:[-_.@]|$)/u.test(normalized)) {
+    return "en";
+  }
+
+  return undefined;
+}
 
 export function resolveLocale(language: string): SupportedLocale {
-  return language.toLowerCase().startsWith("ru") ? "ru" : "en";
+  return tryResolveLocale(language) ?? "en";
+}
+
+export function resolvePreferredLocale(
+  languages: readonly string[],
+): SupportedLocale {
+  for (const language of languages) {
+    const locale = tryResolveLocale(language);
+    if (locale !== undefined) {
+      return locale;
+    }
+  }
+
+  return "en";
+}
+
+export function languageTag(locale: SupportedLocale): string {
+  return languageTags[locale];
 }
 
 export function translate(locale: SupportedLocale, key: MessageKey): string {
-  return messages[locale][key];
+  return resources[locale][key];
+}
+
+export function formatNumber(locale: SupportedLocale, value: number): string {
+  return new Intl.NumberFormat(languageTags[locale]).format(value);
+}
+
+export function formatDateTime(
+  locale: SupportedLocale,
+  value: Date | number,
+  timeZone?: string,
+): string {
+  return new Intl.DateTimeFormat(languageTags[locale], {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone,
+  }).format(value);
+}
+
+export function formatDurationMinutes(
+  locale: SupportedLocale,
+  minutes: number,
+): string {
+  if (!Number.isFinite(minutes) || minutes < 0) {
+    throw new RangeError(
+      "Duration minutes must be a finite non-negative number.",
+    );
+  }
+
+  const category = new Intl.PluralRules(languageTags[locale]).select(minutes);
+  const supportedCategory: PluralCategory = pluralCategories.includes(
+    category as PluralCategory,
+  )
+    ? (category as PluralCategory)
+    : "other";
+  const unit = resources[locale].durationMinutes[supportedCategory];
+
+  return `${formatNumber(locale, minutes)} ${unit}`;
 }
