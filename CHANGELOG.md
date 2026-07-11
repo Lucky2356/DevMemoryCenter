@@ -17,3 +17,4 @@ All notable changes will be documented here. The project has no release yet.
 - Added reproducible Rust dependency audit/deny policy and CI gates, remediated High XML parser advisories, and raised the security baseline to Rust 1.88.
 - Added privacy-safe structured local logging with closed event fields, bounded rotation, retention, private Unix permissions, and explicit clearing.
 - Added bounded fail-closed repository/history secret scanning, a full-history CI gate, and GitHub contribution/security metadata.
+- Corrected Linux observability test fixtures to retain private file permissions during retention tests.

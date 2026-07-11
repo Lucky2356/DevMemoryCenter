@@ -642,6 +642,7 @@ fn platform_path_length(path: &Path) -> usize {
 mod tests {
     use std::{
         fs,
+        io::Write,
         path::{Path, PathBuf},
         sync::{
             Arc,
@@ -689,6 +690,25 @@ mod tests {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.path);
         }
+    }
+
+    fn create_private_fixture(path: &Path, bytes: &[u8]) -> fs::File {
+        let mut options = fs::OpenOptions::new();
+        options.create_new(true).write(true);
+
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::OpenOptionsExt;
+
+            options.mode(0o600);
+        }
+
+        let mut file = options
+            .open(path)
+            .expect("private fixture should be created");
+        file.write_all(bytes)
+            .expect("private fixture should be written");
+        file
     }
 
     #[test]
@@ -862,7 +882,7 @@ mod tests {
         drop(logger);
 
         let archive = archive_path(&directory.log_directory(), 1);
-        let file = fs::File::create(&archive).expect("archive fixture should be created");
+        let file = create_private_fixture(&archive, b"synthetic fixture");
         file.set_times(
             fs::FileTimes::new().set_modified(SystemTime::now() - Duration::from_secs(8 * 86_400)),
         )
@@ -884,9 +904,9 @@ mod tests {
         drop(logger);
 
         let oversized = archive_path(&directory.log_directory(), 1);
-        fs::write(&oversized, vec![0_u8; 4097]).expect("oversized archive should be created");
+        drop(create_private_fixture(&oversized, &vec![0_u8; 4097]));
         let excess = archive_path(&directory.log_directory(), 2);
-        fs::write(&excess, b"synthetic fixture").expect("excess archive should be created");
+        drop(create_private_fixture(&excess, b"synthetic fixture"));
 
         let logger = LocalLogger::open_with_limits(directory.path(), limits)
             .expect("logger should prune and reopen");

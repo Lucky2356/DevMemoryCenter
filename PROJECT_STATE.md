@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added bounded fail-closed repository and reachable-history secret scanning with regression tests and a full-history CI gate.
+Corrected Unix observability archive fixtures to preserve the logger's fail-closed private-file invariant in hosted Linux tests.
 
 ## Work in progress
 
-None. The repository scanner and GitHub governance metadata are ready for the owner-authorized first push.
+None. The first hosted run proved the repository-security job and exposed two Linux-only test-fixture permission failures; the follow-up fixture correction awaits its post-commit hosted rerun.
 
 ## Completed
 
@@ -57,11 +57,13 @@ None. The repository scanner and GitHub governance metadata are ready for the ow
 - Added fail-closed limits for file/blob size, file/blob count, total bytes, and Git enumeration output; working-tree symlinks are scanned as link text without following them.
 - Added regression tests for synthetic credentials, safe placeholders, deleted-but-reachable history, oversized files, and Windows path normalization.
 - Added a minimal-permission full-history CI job plus CODEOWNERS, structured non-sensitive issue forms, a security-focused pull-request checklist, and controlled weekly Dependabot configuration.
+- Corrected expired/oversized/excess archive test fixtures to create Unix files with `0600`, matching the production logger's fail-closed permission policy without weakening it.
 
 ## Tests passed
 
 - `npm run test`: 4 repository-security tests and 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
 - `cargo test --workspace --all-features`: 25 Rust unit tests passed; doc tests passed.
+- The first GitHub run passed the full-history repository-security job; its Linux quality job reached Rust tests and exposed the now-corrected private-fixture mode mismatch.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
@@ -72,7 +74,7 @@ None. The repository scanner and GitHub governance metadata are ready for the ow
 ## Checks not run
 
 - Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
-- The new repository-security job has not run on GitHub before this commit; its local equivalent passed. Verify the owner-authorized pushed run before treating the hosted gate as proven.
+- The corrected Linux-only observability tests require a hosted rerun after this follow-up commit; the Windows host cannot execute their Unix permission assertions.
 
 ## Security checks passed
 
@@ -115,7 +117,7 @@ None. The repository scanner and GitHub governance metadata are ready for the ow
 - Global `cargo-tauri` is not installed; the verified repository-local npm CLI is used.
 - Linux prerequisites and builds remain unverified from this Windows host.
 - The application currently has only the foundation status screen; all MVP features remain planned.
-- No successful GitHub-hosted CI run is recorded before this commit; the owner-authorized post-commit push must be monitored on both runner platforms.
+- The initial hosted CI run is red only because two synthetic archive fixtures inherited `0644`; the production permission rejection worked as designed. A full rerun remains required after this correction.
 - Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
 - Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
 - Theme selection is in-memory only and intentionally resets to the system preference until an approved local settings store exists.
@@ -145,7 +147,7 @@ Add application-owned background-operation lifecycle and shutdown tests.
 
 ## Last stable commit
 
-`bae5f31` (`feat: add bounded local observability`) is the stable baseline preceding this work unit.
+`b7a4a2b` (`security: add bounded repository secret scanning`) is the stable baseline preceding this follow-up work unit.
 
 ## Commands to verify
 
