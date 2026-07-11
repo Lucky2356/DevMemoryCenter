@@ -10,7 +10,7 @@ Corrected Unix observability archive fixtures to preserve the logger's fail-clos
 
 ## Work in progress
 
-None. The first hosted run proved the repository-security job and exposed two Linux-only test-fixture permission failures; the follow-up fixture correction awaits its post-commit hosted rerun.
+None. The private GitHub repository is published and the follow-up hosted CI run passed repository security, dependency security, Ubuntu quality/build, and Windows quality/build jobs.
 
 ## Completed
 
@@ -58,12 +58,13 @@ None. The first hosted run proved the repository-security job and exposed two Li
 - Added regression tests for synthetic credentials, safe placeholders, deleted-but-reachable history, oversized files, and Windows path normalization.
 - Added a minimal-permission full-history CI job plus CODEOWNERS, structured non-sensitive issue forms, a security-focused pull-request checklist, and controlled weekly Dependabot configuration.
 - Corrected expired/oversized/excess archive test fixtures to create Unix files with `0600`, matching the production logger's fail-closed permission policy without weakening it.
+- Published `main` to the owner repository with a production-oriented description, scoped topics, issue/project support, squash-only merges, branch deletion after merge, security/dependency alerts, CODEOWNERS, labels, issue forms, and pull-request guidance.
 
 ## Tests passed
 
 - `npm run test`: 4 repository-security tests and 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
 - `cargo test --workspace --all-features`: 25 Rust unit tests passed; doc tests passed.
-- The first GitHub run passed the full-history repository-security job; its Linux quality job reached Rust tests and exposed the now-corrected private-fixture mode mismatch.
+- GitHub Actions run `29167499295` passed the full-history repository-security job, dependency audits, Ubuntu 24.04 quality/tests/Tauri build, and Windows 2025 quality/tests/Tauri build.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
@@ -73,8 +74,7 @@ None. The first hosted run proved the repository-security job and exposed two Li
 
 ## Checks not run
 
-- Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
-- The corrected Linux-only observability tests require a hosted rerun after this follow-up commit; the Windows host cannot execute their Unix permission assertions.
+- Representative packaged permission behavior still requires installer-level Windows/Linux release testing; current hosted debug builds are not installer verification.
 
 ## Security checks passed
 
@@ -115,9 +115,9 @@ None. The first hosted run proved the repository-security job and exposed two Li
 ## Known issues
 
 - Global `cargo-tauri` is not installed; the verified repository-local npm CLI is used.
-- Linux prerequisites and builds remain unverified from this Windows host.
+- GitHub branch protection and required-check enforcement are unavailable for this private personal repository without GitHub Pro or changing visibility to public; neither paid service nor visibility change was authorized.
 - The application currently has only the foundation status screen; all MVP features remain planned.
-- The initial hosted CI run is red only because two synthetic archive fixtures inherited `0644`; the production permission rejection worked as designed. A full rerun remains required after this correction.
+- The initial hosted Linux run exposed two synthetic archive fixtures inheriting `0644`; the production permission rejection worked as designed, and the corrected follow-up run is green.
 - Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
 - Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
 - Theme selection is in-memory only and intentionally resets to the system preference until an approved local settings store exists.
@@ -147,7 +147,7 @@ Add application-owned background-operation lifecycle and shutdown tests.
 
 ## Last stable commit
 
-`b7a4a2b` (`security: add bounded repository secret scanning`) is the stable baseline preceding this follow-up work unit.
+`06b17df` (`test: preserve private Unix log fixtures`) is the stable baseline preceding this documentation sync.
 
 ## Commands to verify
 

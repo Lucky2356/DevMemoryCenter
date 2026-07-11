@@ -114,3 +114,4 @@ None. Bounded repository and reachable-history secret scanning is complete.
 - [x] Add the closed-schema local logger with bounded JSON lines, rotation, retention, private Unix permissions, explicit clearing, and Tauri ownership.
 - [x] Add fail-closed repository and reachable-history secret scanning, regression tests, a full-history CI gate, and secure GitHub contribution metadata.
 - [x] Correct Unix observability archive fixtures to preserve private `0600` permissions in hosted Linux tests.
+- [x] Publish and configure the private GitHub repository, then verify all hosted Windows/Linux/security jobs.
