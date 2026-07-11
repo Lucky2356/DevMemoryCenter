@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added a bounded SQLx SQLite persistence crate and immutable initial owner migration.
+Added migration compatibility coverage for the empty and representative populated database states.
 
 ## Work in progress
 
-None. The persistence foundation is complete but is intentionally not initialized by the desktop application.
+None. The migration tests are complete; persistence remains intentionally uninitialized by the desktop application.
 
 ## Completed
 
@@ -43,11 +43,13 @@ None. The persistence foundation is complete but is intentionally not initialize
 - Added embedded checksum-validated migration `0001_initial.sql` with a strict `owners` table, stable-ID/timestamp constraints, and a single-local-owner index.
 - Added ADR-0011 and removed SQLx macros after the resolved dependency graph showed unrelated database packages; the active graph is SQLite-only and has no database TLS or extension loading.
 - Installed user-scoped Rust 1.85.0 and verified the full workspace against its declared MSRV.
+- Added deterministic migration tests covering an empty database, a representative database with 128 synthetic owner records, repeat migration execution, preserved sentinel records, and rejection of a changed applied-migration checksum.
+- Documented that previous-version upgrade coverage becomes mandatory with migration version 2; no previous schema version exists while `0001_initial.sql` is the sole migration.
 
 ## Tests passed
 
 - `npm run test`: 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
-- `cargo test --workspace --all-features`: 14 Rust unit tests passed; doc tests passed.
+- `cargo test --workspace --all-features`: 16 Rust unit tests passed; doc tests passed.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
@@ -55,8 +57,8 @@ None. The persistence foundation is complete but is intentionally not initialize
 
 ## Checks not run
 
-- `cargo audit`: not run because `cargo-audit` is not installed. Install deliberately, then run `cargo audit`; residual risk is an unverified Rust advisory database scan.
-- `cargo deny check`: not run because `cargo-deny` is not installed and policy configuration is a Phase 1 task. Residual risk is unverified Rust license/advisory/duplicate policy.
+- `cargo audit`: attempted but unavailable because `cargo-audit` is not installed. Install deliberately, then run `cargo audit`; residual risk is an unverified Rust advisory database scan.
+- `cargo deny check`: attempted but unavailable because `cargo-deny` is not installed and policy configuration is a Phase 1 task. Residual risk is unverified Rust license/advisory/duplicate policy.
 - Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
 - The GitHub-hosted workflow itself has not run because no push was authorized; workflow success on both runner images remains externally unverified.
 
@@ -74,12 +76,14 @@ None. The persistence foundation is complete but is intentionally not initialize
 - Driver review confirmed SQLx 0.8.6 is above the `>=0.8.1` patched boundary for RUSTSEC-2024-0363, excludes remote database/TLS features, and does not authorize extension loading or raw-handle access.
 - Resolved-tree review confirmed only SQLx core/SQLite components, bundled `libsqlite3-sys 0.30.1`, and expected Tokio/futures support; MySQL, PostgreSQL, TLS, query macros, and extension-loading features are absent.
 - Database regression tests verify relative/non-file path rejection, explicit pool bounds, foreign keys, WAL disabled, zero virtual tables, migration history, parameterized constraint enforcement, duplicate local-owner rejection, clean reopen, and explicit close.
+- Migration compatibility regression tests verify that 128 bounded synthetic records survive a close/reopen migration cycle and that a changed checksum for migration version 1 fails closed with a version-mismatch error.
+- Repository scan for common token, private-key, and assigned-secret patterns found no candidate sensitive data; migration fixtures contain only deterministic synthetic identifiers.
 - Manual RustSec review confirmed SQLx 0.8.6 and libsqlite3-sys 0.30.1 exceed their recorded patched boundaries. The older bundled SQLite engine risk is recorded separately in `SECURITY_FINDINGS.md`.
 
 ## Performance measurements
 
 - Frontend production build completed in approximately 0.2 seconds; output was 199.81 kB JavaScript (63.49 kB gzip) and 4.89 kB CSS (1.57 kB gzip).
-- Persistence tests including create, migrate, constrained writes, explicit close, and reopen completed in approximately 0.34 seconds on the final Windows run; this is a regression-test observation, not a production benchmark.
+- Persistence tests including empty migration, 128-record preservation, checksum rejection, constrained writes, explicit close, and reopen completed in approximately 0.08 seconds on the focused Windows run; this is a regression-test observation, not a production benchmark.
 - The pool permits at most four SQLite worker connections, keeps zero minimum idle connections, and bounds command buffers at 32, row buffers at 128, and statement caches at 64 per connection.
 - The persistence crate is not linked into the desktop package, so it adds no current desktop runtime threads or binary payload. Re-measure when the composition root begins owning a database.
 
@@ -110,11 +114,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Test migrations from empty and representative databases.
+Add privacy-safe structured local logging with rotation and retention.
 
 ## Last stable commit
 
-`HEAD` after the bounded SQLite foundation commit (`feat: add bounded SQLite foundation`).
+`0a34078` (`feat: add bounded SQLite foundation`) is the stable baseline preceding this work unit.
 
 ## Commands to verify
 

@@ -13,3 +13,4 @@ All notable changes will be documented here. The project has no release yet.
 - Added the first bounded health IPC contract with sanitized typed errors.
 - Selected a minimal SQLite-only SQLx 0.8 dependency profile after a documented driver, MSRV, security, and packaging comparison.
 - Added a bounded SQLite persistence crate, embedded immutable initial migration, private application-database path handling, and explicit shutdown.
+- Added migration compatibility tests for empty and representative populated databases plus fail-closed applied-checksum validation.

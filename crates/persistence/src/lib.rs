@@ -267,9 +267,11 @@ mod tests {
         sync::atomic::{AtomicU64, Ordering},
     };
 
-    use sqlx::Row;
+    use sqlx::{Row, migrate::MigrateError};
 
-    use super::{Database, DatabaseConfig, DatabaseConfigError, MAX_CONNECTIONS, pool_options};
+    use super::{
+        Database, DatabaseConfig, DatabaseConfigError, DatabaseError, MAX_CONNECTIONS, pool_options,
+    };
 
     static NEXT_TEST_DIRECTORY: AtomicU64 = AtomicU64::new(0);
 
@@ -335,7 +337,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn opens_database_with_foreign_keys_and_initial_migration() {
+    async fn migrates_empty_database_with_foreign_keys_and_initial_schema() {
         let directory = TestDirectory::create();
         let config = DatabaseConfig::for_application_data_directory(directory.path())
             .expect("test directory should be accepted");
@@ -429,5 +431,120 @@ mod tests {
                 .expect("migration history should remain readable");
         assert_eq!(migration_count_after_reopen, 1);
         reopened_database.close().await;
+    }
+
+    #[tokio::test]
+    async fn rerunning_migrations_preserves_representative_populated_database() {
+        const OWNER_COUNT: u32 = 128;
+
+        let directory = TestDirectory::create();
+        let config = DatabaseConfig::for_application_data_directory(directory.path())
+            .expect("test directory should be accepted");
+        let database = Database::open(config.clone())
+            .await
+            .expect("empty database should migrate");
+        let mut transaction = database
+            .pool()
+            .begin()
+            .await
+            .expect("representative data transaction should begin");
+
+        for sequence in 1..=OWNER_COUNT {
+            let owner_id = format!("00000000-0000-0000-0000-{sequence:012}");
+            let owner_type = if sequence == 1 { "local" } else { "workspace" };
+
+            sqlx::query("INSERT INTO owners (id, owner_type, created_at_unix_ms) VALUES (?, ?, ?)")
+                .bind(owner_id)
+                .bind(owner_type)
+                .bind(i64::from(sequence))
+                .execute(&mut *transaction)
+                .await
+                .expect("synthetic representative owner should be inserted");
+        }
+
+        transaction
+            .commit()
+            .await
+            .expect("representative data transaction should commit");
+        database.close().await;
+
+        let reopened_database = Database::open(config)
+            .await
+            .expect("populated database should reopen and rerun migrations");
+        let migration_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM _sqlx_migrations")
+            .fetch_one(reopened_database.pool())
+            .await
+            .expect("migration history should remain readable");
+        assert_eq!(migration_count, 1);
+
+        let owner_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM owners")
+            .fetch_one(reopened_database.pool())
+            .await
+            .expect("representative owner count should be readable");
+        assert_eq!(owner_count, i64::from(OWNER_COUNT));
+
+        let local_owner: (String, String, i64) = sqlx::query_as(
+            "SELECT id, owner_type, created_at_unix_ms FROM owners WHERE owner_type = ?",
+        )
+        .bind("local")
+        .fetch_one(reopened_database.pool())
+        .await
+        .expect("synthetic local owner should remain intact");
+        assert_eq!(
+            local_owner,
+            (
+                "00000000-0000-0000-0000-000000000001".to_owned(),
+                "local".to_owned(),
+                1,
+            )
+        );
+
+        let last_owner: (String, String, i64) =
+            sqlx::query_as("SELECT id, owner_type, created_at_unix_ms FROM owners WHERE id = ?")
+                .bind("00000000-0000-0000-0000-000000000128")
+                .fetch_one(reopened_database.pool())
+                .await
+                .expect("last synthetic owner should remain intact");
+        assert_eq!(
+            last_owner,
+            (
+                "00000000-0000-0000-0000-000000000128".to_owned(),
+                "workspace".to_owned(),
+                128,
+            )
+        );
+
+        reopened_database.close().await;
+    }
+
+    #[tokio::test]
+    async fn rejects_changed_checksum_for_applied_migration() {
+        let directory = TestDirectory::create();
+        let config = DatabaseConfig::for_application_data_directory(directory.path())
+            .expect("test directory should be accepted");
+        let database = Database::open(config.clone())
+            .await
+            .expect("empty database should migrate");
+
+        sqlx::query("UPDATE _sqlx_migrations SET checksum = ? WHERE version = ?")
+            .bind(vec![0_u8; 48])
+            .bind(1_i64)
+            .execute(database.pool())
+            .await
+            .expect("test should replace the stored migration checksum");
+        database.close().await;
+
+        let error = match Database::open(config).await {
+            Ok(database) => {
+                database.close().await;
+                panic!("changed migration checksum should fail closed");
+            }
+            Err(error) => error,
+        };
+
+        assert!(matches!(
+            error,
+            DatabaseError::Migration(MigrateError::VersionMismatch(1))
+        ));
     }
 }

@@ -6,14 +6,14 @@ Phase 1 — Application foundation
 
 ### In progress
 
-None. The bounded SQLite connection and initial migration task is complete.
+None. Migration compatibility coverage for the current initial schema is complete.
 
 ### Ready
 
 #### Phase 1 — Application foundation
 
 - [x] Compare maintained SQLite Rust drivers and document the selected dependency.
-- [ ] Test migrations from empty and representative databases.
+- [x] Test migrations from empty and representative databases.
 - [ ] Add privacy-safe structured local logging with rotation and retention.
 - [ ] Configure `cargo-deny`, dependency audits, frontend audits, and secret scanning.
 - [ ] Add application-owned background-operation lifecycle and shutdown tests.
@@ -108,3 +108,4 @@ None. The bounded SQLite connection and initial migration task is complete.
 - [x] Define typed sanitized application errors and a bounded read-only IPC health contract.
 - [x] Compare SQLx, rusqlite, and Diesel and select a minimal SQLx 0.8 SQLite dependency profile in ADR-0010.
 - [x] Add the bounded SQLx persistence crate, private database-file setup, and immutable initial owner migration.
+- [x] Test the initial migration from an empty database, preserve a representative populated database on rerun, and reject changed applied checksums.

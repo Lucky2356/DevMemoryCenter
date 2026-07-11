@@ -25,3 +25,12 @@ Every behavior change requires relevant tests plus format, lint, typecheck, test
 ## Long-running and recovery tests
 
 Before release: eight-hour idle/active soak; repeated project open/close; 100 session cycles; large and repeated imports; rapid navigation; shutdown during import; restart after simulated crash; migration from empty, previous, and representative populated databases.
+
+## Migration compatibility matrix
+
+- Empty database: the current integration test creates the application-owned file, applies the embedded initial migration, checks schema and connection invariants, and verifies a clean reopen.
+- Representative populated database: a deterministic fixture inserts 128 synthetic owner records in one transaction, closes the pool, reruns the migrator, and verifies migration count plus first/last record integrity.
+- Applied migration integrity: a safe test-only checksum change must fail closed with SQLx's version-mismatch error.
+- Previous schema version: not applicable while `0001_initial.sql` is the only migration. Every migration after version 1 must add both a previous-version upgrade fixture and a representative populated upgrade fixture before acceptance.
+
+Migration fixtures must remain synthetic, bounded, deterministic, and free of real paths, credentials, command history, or user data.
