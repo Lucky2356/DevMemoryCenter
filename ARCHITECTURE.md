@@ -30,6 +30,8 @@ ports/interfaces
 SQLite, filesystem, Git, shell-history and platform adapters
 ```
 
+ADR-0010 selects SQLx 0.8 for the planned SQLite adapter, with only Tokio runtime, SQLite, migration, and macro features. The dependency is not installed yet. The adapter will own a small bounded pool and bounded SQLite worker buffers, embed immutable migrations, close connections explicitly on shutdown, and expose only repository interfaces to the application layer.
+
 The frontend never receives unrestricted filesystem, database, environment, shell, or process access. Rust validates every request and returns typed, sanitized errors. Domain and application crates remain independent of Tauri.
 
 ## Proposed repository structure

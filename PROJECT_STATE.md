@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added typed sanitized application errors and the first bounded read-only frontend/Tauri health contract.
+Compared maintained Rust SQLite drivers and selected a minimal SQLx 0.8 dependency profile in ADR-0010.
 
 ## Work in progress
 
-None. The IPC health contract task is complete; the next Phase 1 task has not started.
+None. The driver selection is documented; SQLx and persistence code have not been added.
 
 ## Completed
 
@@ -35,6 +35,9 @@ None. The IPC health contract task is complete; the next Phase 1 task has not st
 - Added `get_application_health` with a 1–64 byte ASCII correlation ID, unknown-field rejection, fixed protocol response, and no host or user-data inspection.
 - Added a TypeScript IPC adapter that reconstructs bounded payloads, validates exact responses, sanitizes arbitrary rejections, and returns discriminated results.
 - Added localized English/Russian messages for the fixed `invalid_request`, `invalid_response`, and `operation_failed` error keys.
+- Compared SQLx 0.8.6, rusqlite 0.40.1, and Diesel 2.3.11 against migration, concurrency, scope, native packaging, license, security-history, and project-fit criteria.
+- Added ADR-0010 selecting SQLx 0.8.6 with defaults disabled and only `macros`, `migrate`, `runtime-tokio`, and bundled `sqlite` features.
+- Preserved the Rust 1.85 MSRV by deferring SQLx 0.9.0, which declares Rust 1.94, and recorded rusqlite as the fallback if implementation gates fail.
 
 ## Tests passed
 
@@ -43,7 +46,6 @@ None. The IPC health contract task is complete; the next Phase 1 task has not st
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
-- `npm ci --ignore-scripts`: locked installation completed with no lifecycle scripts and included `@tauri-apps/api 2.11.1`.
 
 ## Checks not run
 
@@ -51,6 +53,7 @@ None. The IPC health contract task is complete; the next Phase 1 task has not st
 - `cargo deny check`: not run because `cargo-deny` is not installed and policy configuration is a Phase 1 task. Residual risk is unverified Rust license/advisory/duplicate policy.
 - Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
 - The GitHub-hosted workflow itself has not run because no push was authorized; workflow success on both runner images remains externally unverified.
+- Rust 1.85 compatibility of SQLx 0.8.6 was not run because only the current stable 1.96 toolchain is installed and the dependency is not yet part of the workspace. The next task must verify the resolved dependency before commit; the residual risk is that the selected 0.8 line or a transitive dependency may require a higher compiler.
 
 ## Security checks passed
 
@@ -63,12 +66,13 @@ None. The IPC health contract task is complete; the next Phase 1 task has not st
 - Theme review confirmed bounded state, no storage/network/IPC behavior, native keyboard controls, and reduced-motion handling for presentation transitions.
 - IPC regression tests confirmed oversized/unsafe IDs and unknown fields are rejected, malformed responses fail closed, arbitrary error text is discarded, and rejected input is not serialized.
 - Dependency review confirmed the official Tauri API package has no runtime dependencies or install script; `npm audit --audit-level=high` found zero known vulnerabilities.
+- Driver review confirmed SQLx 0.8.6 is above the `>=0.8.1` patched boundary for RUSTSEC-2024-0363, excludes remote database/TLS features, and does not authorize extension loading or raw-handle access. Final transitive results remain pending until the dependency enters `Cargo.lock`.
 
 ## Performance measurements
 
-- Frontend production build completed in approximately 0.2 seconds; output was 199.81 kB JavaScript (63.49 kB gzip) and 4.89 kB CSS (1.57 kB gzip) after the IPC contract was added.
-- The health command performs bounded constant-time validation, no I/O, no allocation proportional to untrusted input after deserialization, and spawns no task; no separate benchmark was required.
-- No runtime/idle measurement was taken; the skeleton is not an MVP and initial acceptance budgets remain in `docs/performance/PERFORMANCE_BUDGETS.md`.
+- Frontend production build completed in approximately 0.2 seconds; output was 199.81 kB JavaScript (63.49 kB gzip) and 4.89 kB CSS (1.57 kB gzip).
+- This documentation-only task added no runtime code or dependency, so no new runtime measurement was applicable.
+- SQLx creates one SQLite worker thread per connection; ADR-0010 therefore requires a deliberately small pool, bounded worker buffers, and binary/idle measurements when the dependency is added.
 
 ## Known issues
 
@@ -81,6 +85,7 @@ None. The IPC health contract task is complete; the next Phase 1 task has not st
 - Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
 - Theme selection is in-memory only and intentionally resets to the system preference until an approved local settings store exists.
 - The health adapter is not yet called by a screen; it establishes and tests the first contract without fabricating runtime health UI behavior.
+- SQLx is selected but not installed; Rust 1.85 compatibility, resolved transitive licenses/advisories, bundled SQLite version, binary delta, and Windows/Linux packaging remain implementation gates.
 
 ## Security findings
 
@@ -95,11 +100,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Compare maintained SQLite Rust drivers and document the selected dependency.
+Add the bounded SQLite connection setup and immutable initial migration.
 
 ## Last stable commit
 
-`HEAD` after the IPC contract commit (`feat: add bounded health IPC contract`).
+`HEAD` after the SQLite driver selection commit (`docs: select SQLx SQLite driver`).
 
 ## Commands to verify
 
