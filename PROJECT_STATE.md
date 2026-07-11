@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added localized system, light, and dark application themes with a bounded native selector and reduced-motion behavior.
+Added typed sanitized application errors and the first bounded read-only frontend/Tauri health contract.
 
 ## Work in progress
 
-None. The theme task is complete; the next Phase 1 task has not started.
+None. The IPC health contract task is complete; the next Phase 1 task has not started.
 
 ## Completed
 
@@ -32,15 +32,18 @@ None. The theme task is complete; the next Phase 1 task has not started.
 - Added localized screen descriptions and honest shared loading, empty, normal, error, and disabled state semantics.
 - Added a typed three-value theme preference with system as the default and explicit light/dark overrides.
 - Added localized native radio controls, semantic palette tokens, native-control color schemes, and reduced-motion transition suppression.
+- Added `get_application_health` with a 1–64 byte ASCII correlation ID, unknown-field rejection, fixed protocol response, and no host or user-data inspection.
+- Added a TypeScript IPC adapter that reconstructs bounded payloads, validates exact responses, sanitizes arbitrary rejections, and returns discriminated results.
+- Added localized English/Russian messages for the fixed `invalid_request`, `invalid_response`, and `operation_failed` error keys.
 
 ## Tests passed
 
-- `npm run test`: 19 localization and application-shell component tests passed.
-- `cargo test --workspace --all-features`: 5 Rust unit tests passed; doc tests passed.
+- `npm run test`: 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
+- `cargo test --workspace --all-features`: 10 Rust unit tests passed; doc tests passed.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
-- Local browser QA passed for the localized system selector, interactive light/dark switching, and distinct computed palette colors.
+- `npm ci --ignore-scripts`: locked installation completed with no lifecycle scripts and included `@tauri-apps/api 2.11.1`.
 
 ## Checks not run
 
@@ -58,10 +61,13 @@ None. The theme task is complete; the next Phase 1 task has not started.
 - Localization review confirmed no remote locale loading, no persistence or transmission of language preferences, no unsafe HTML fallback, and no internal Tauri error exposure.
 - UI review confirmed bounded navigation state, text-only rendering, no IPC/network/storage behavior, and accessible loading/error/disabled semantics.
 - Theme review confirmed bounded state, no storage/network/IPC behavior, native keyboard controls, and reduced-motion handling for presentation transitions.
+- IPC regression tests confirmed oversized/unsafe IDs and unknown fields are rejected, malformed responses fail closed, arbitrary error text is discarded, and rejected input is not serialized.
+- Dependency review confirmed the official Tauri API package has no runtime dependencies or install script; `npm audit --audit-level=high` found zero known vulnerabilities.
 
 ## Performance measurements
 
-- Frontend production build completed in approximately 0.3 seconds; output was 199.33 kB JavaScript (63.33 kB gzip) and 4.89 kB CSS (1.57 kB gzip) after theme support was added.
+- Frontend production build completed in approximately 0.2 seconds; output was 199.81 kB JavaScript (63.49 kB gzip) and 4.89 kB CSS (1.57 kB gzip) after the IPC contract was added.
+- The health command performs bounded constant-time validation, no I/O, no allocation proportional to untrusted input after deserialization, and spawns no task; no separate benchmark was required.
 - No runtime/idle measurement was taken; the skeleton is not an MVP and initial acceptance budgets remain in `docs/performance/PERFORMANCE_BUDGETS.md`.
 
 ## Known issues
@@ -74,6 +80,7 @@ None. The theme task is complete; the next Phase 1 task has not started.
 - Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
 - Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
 - Theme selection is in-memory only and intentionally resets to the system preference until an approved local settings store exists.
+- The health adapter is not yet called by a screen; it establishes and tests the first contract without fabricating runtime health UI behavior.
 
 ## Security findings
 
@@ -88,11 +95,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Define typed sanitized application errors and the first narrow IPC health command with runtime limits.
+Compare maintained SQLite Rust drivers and document the selected dependency.
 
 ## Last stable commit
 
-`HEAD` after the theme commit (`feat: add application theme preferences`).
+`HEAD` after the IPC contract commit (`feat: add bounded health IPC contract`).
 
 ## Commands to verify
 

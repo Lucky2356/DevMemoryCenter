@@ -17,6 +17,11 @@ export const ru = {
     light: "Светлая",
     dark: "Тёмная",
   },
+  errors: {
+    invalid_request: "Запрос содержит недопустимые данные.",
+    invalid_response: "Dev Recall получил некорректный локальный ответ.",
+    operation_failed: "Не удалось выполнить локальную операцию.",
+  },
   navigation: {
     overview: "Обзор",
     projects: "Проекты",

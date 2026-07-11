@@ -6,13 +6,12 @@ Phase 1 — Application foundation
 
 ### In progress
 
-None. The application theme task is complete.
+None. The typed IPC health contract task is complete.
 
 ### Ready
 
 #### Phase 1 — Application foundation
 
-- [ ] Define typed sanitized application errors and the first narrow IPC health command with runtime limits.
 - [ ] Compare maintained SQLite Rust drivers and document the selected dependency.
 - [ ] Add the bounded SQLite connection setup and immutable initial migration.
 - [ ] Test migrations from empty and representative databases.
@@ -107,3 +106,4 @@ None. The application theme task is complete.
 - [x] Add typed English/Russian locale resources, preference resolution, locale-aware number/date/duration formatting, localized document metadata, and localized safe startup failures.
 - [x] Add responsive localized navigation, keyboard skip/focus support, and shared loading, empty, normal, error, and disabled screen states.
 - [x] Add localized light, dark, and system theme controls with reduced-motion behavior.
+- [x] Define typed sanitized application errors and a bounded read-only IPC health contract.

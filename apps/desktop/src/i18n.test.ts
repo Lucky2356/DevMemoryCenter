@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  applicationErrorMessage,
   formatDateTime,
   formatDurationMinutes,
   formatNumber,
@@ -36,6 +37,15 @@ describe("localization foundation", () => {
   it("provides document language tags", () => {
     expect(languageTag("en")).toBe("en-US");
     expect(languageTag("ru")).toBe("ru-RU");
+  });
+
+  it("provides localized messages for sanitized application errors", () => {
+    expect(applicationErrorMessage("en", "invalid_request")).toBe(
+      "The request was not valid.",
+    );
+    expect(applicationErrorMessage("ru", "operation_failed")).toBe(
+      "Не удалось выполнить локальную операцию.",
+    );
   });
 
   it("formats numbers and dates for the selected locale", () => {

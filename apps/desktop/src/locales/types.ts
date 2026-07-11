@@ -3,6 +3,7 @@ import type {
   ScreenStateKind,
   ThemePreference,
 } from "../models/app-shell";
+import type { ApplicationErrorMessageKey } from "../ipc/application-error";
 
 export type PluralCategory = "one" | "few" | "many" | "other";
 
@@ -23,6 +24,7 @@ export interface Messages {
   readonly applicationStatus: string;
   readonly themeLabel: string;
   readonly themes: Readonly<Record<ThemePreference, string>>;
+  readonly errors: Readonly<Record<ApplicationErrorMessageKey, string>>;
   readonly navigation: Readonly<Record<NavigationId, string>>;
   readonly screenDescriptions: Readonly<Record<NavigationId, string>>;
   readonly screenStates: Readonly<Record<ScreenStateKind, StateMessage>>;

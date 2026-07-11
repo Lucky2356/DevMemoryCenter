@@ -1,6 +1,7 @@
 import { en } from "./locales/en";
 import { ru } from "./locales/ru";
 import type { Messages, PluralCategory } from "./locales/types";
+import type { ApplicationErrorMessageKey } from "./ipc/application-error";
 import type {
   NavigationId,
   ScreenStateKind,
@@ -28,6 +29,7 @@ const pluralCategories: readonly PluralCategory[] = [
 export type MessageKey = Exclude<
   keyof Messages,
   | "durationMinutes"
+  | "errors"
   | "navigation"
   | "screenDescriptions"
   | "screenStates"
@@ -85,6 +87,13 @@ export function themeLabel(
   preference: ThemePreference,
 ): string {
   return resources[locale].themes[preference];
+}
+
+export function applicationErrorMessage(
+  locale: SupportedLocale,
+  messageKey: ApplicationErrorMessageKey,
+): string {
+  return resources[locale].errors[messageKey];
 }
 
 export function screenDescription(

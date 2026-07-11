@@ -2,7 +2,7 @@
 
 ## Status and scope
 
-This document defines the intended MVP architecture. The initial codebase is only a compileable desktop shell and does not yet implement the layers described below.
+This document defines the intended MVP architecture. The current codebase is a compileable desktop foundation with one narrow health IPC contract; it does not yet implement the product layers described below.
 
 ## Drivers
 
@@ -91,6 +91,10 @@ English and Russian resources are compiled into the application; no locale bundl
 ## Presentation shell
 
 The React shell keeps navigation state in one bounded `NavigationId` union and does not introduce a router dependency before URL/history behavior is required. Native controls, semantic landmarks, a skip link, visible focus, `aria-current`, and live-region/status semantics provide the keyboard and screen-reader foundation. A shared discriminated screen-state renderer prevents individual screens from omitting loading, empty, normal, error, or disabled behavior.
+
+## Initial IPC boundary
+
+`get_application_health` is the only application command currently registered. It accepts one correlation ID limited to 64 ASCII bytes and returns only a fixed readiness status, API version, and the validated ID. It does not inspect the operating system, filesystem, environment, network, database, or user data. Rust rejects unknown fields and unsafe IDs with a fixed serialized error; the TypeScript adapter independently validates requests, responses, and errors before exposing a discriminated result.
 
 ## Architecture risks
 

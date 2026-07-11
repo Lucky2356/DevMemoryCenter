@@ -17,6 +17,11 @@ export const en = {
     light: "Light",
     dark: "Dark",
   },
+  errors: {
+    invalid_request: "The request was not valid.",
+    invalid_response: "Dev Recall received an invalid local response.",
+    operation_failed: "The local operation could not be completed.",
+  },
   navigation: {
     overview: "Overview",
     projects: "Projects",
