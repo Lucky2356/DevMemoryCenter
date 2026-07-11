@@ -1,0 +1,27 @@
+{
+  "name": "dev-recall",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/desktop"
+  ],
+  "scripts": {
+    "format": "prettier --write package.json eslint.config.mjs apps/desktop/package.json apps/desktop/index.html apps/desktop/tsconfig.json apps/desktop/vite.config.ts apps/desktop/src",
+    "format:check": "prettier --check package.json eslint.config.mjs apps/desktop/package.json apps/desktop/index.html apps/desktop/tsconfig.json apps/desktop/vite.config.ts apps/desktop/src",
+    "lint": "eslint apps/desktop/src apps/desktop/vite.config.ts",
+    "typecheck": "npm run typecheck --workspace @dev-recall/desktop",
+    "test": "npm run test --workspace @dev-recall/desktop",
+    "build": "npm run build --workspace @dev-recall/desktop",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "eslint": "10.7.0",
+    "prettier": "3.9.5",
+    "typescript-eslint": "8.63.0"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
+  }
+}

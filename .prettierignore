@@ -1,0 +1,7 @@
+AGENTS.md
+SPEC.md
+node_modules
+target
+apps/desktop/dist
+Cargo.lock
+package-lock.json

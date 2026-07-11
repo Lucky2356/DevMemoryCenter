@@ -1,0 +1,18 @@
+[package]
+name = "dev-recall"
+version = "0.1.0"
+description = "Local memory for developers and system administrators"
+authors = ["Dev Recall contributors"]
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lib]
+name = "dev_recall_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+
+[dependencies]
+tauri = { version = "2.11.5", features = [] }

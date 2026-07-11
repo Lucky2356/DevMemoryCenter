@@ -1,0 +1,25 @@
+# Privacy Model
+
+## Principles
+
+- No collection before onboarding consent.
+- Each source is independently opt-in, previewable, pausable, and removable.
+- All processing is local; the MVP has no telemetry, cloud service, automatic crash upload, or remote content.
+- Collect metadata needed to restore work context, not source contents, terminal output, keystrokes, screens, windows, clipboard contents, credentials, or environment dumps.
+- Redact before persistence and apply privacy filtering again on export.
+
+## User control
+
+The planned Privacy & Data screen will explain sources, last imports, record counts, database size, exclusions, redaction rules, retention, export, scoped deletion, and full reset. Removing a project record never deletes source project files.
+
+## Retention and deletion
+
+Retention is configurable by data category and performed in bounded, cancellable batches. Deletion distinguishes individual records, project metadata, imported terminal records, sessions, and all application data. Destructive database work should be transactional and clearly confirmed.
+
+## Export
+
+JSON, CSV, and safe Markdown exports are planned. Exports are re-redacted and CSV fields are protected against formula injection. Diagnostics exclude the full database by default and require an explicit preview.
+
+## Current implementation
+
+The initial skeleton does not collect, store, export, or transmit user data.
