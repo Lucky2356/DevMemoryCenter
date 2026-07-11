@@ -16,6 +16,6 @@ These are initial acceptance budgets to validate on representative Windows and L
 | IPC request | default maximum 64 KiB unless a narrower command-specific limit is documented |
 | Timeline metadata | maximum 16 KiB serialized per event with a versioned schema |
 | Shutdown | owned background work cancelled and resources released within 5 s; interrupted work recoverable |
-| Logs | bounded rotation and retention; exact size/retention selected with logging implementation |
+| Logs | 1 MiB active file, five 1 MiB archives, seven-day default retention; at most eight numeric context metrics per event and no background worker |
 
 Benchmarks must include malformed and secret-heavy inputs so performance work never bypasses validation or redaction. Complexity is not added solely to meet a synthetic target without profiling.

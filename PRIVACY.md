@@ -16,10 +16,12 @@ The planned Privacy & Data screen will explain sources, last imports, record cou
 
 Retention is configurable by data category and performed in bounded, cancellable batches. Deletion distinguishes individual records, project metadata, imported terminal records, sessions, and all application data. Destructive database work should be transactional and clearly confirmed.
 
+Local diagnostic logs default to a 1 MiB active file, five archives, and seven-day retention. Expired, oversized, and excess fixed-name files are pruned at logger startup and rotation. The logging API exposes clearing, but user-facing consent, retention controls, and deletion remain part of the planned Privacy & Data task.
+
 ## Export
 
 JSON, CSV, and safe Markdown exports are planned. Exports are re-redacted and CSV fields are protected against formula injection. Diagnostics exclude the full database by default and require an explicit preview.
 
 ## Current implementation
 
-The desktop application does not collect, store, export, or transmit user data. The standalone persistence crate can create the initial non-sensitive owner schema for tests and future composition, but it is not initialized by the desktop application.
+The desktop application does not collect, store, export, or transmit user data. It initializes a local logger but emits no event before onboarding consent, so the current runtime creates only an empty application-data-scoped log file and may remove expired, oversized, or excess fixed-name archives. The standalone persistence crate can create the initial non-sensitive owner schema for tests and future composition, but it is not initialized by the desktop application.

@@ -11,6 +11,7 @@ Dev Recall is a planned local-first desktop application for restoring context ar
 - Windows and Linux are the target platforms.
 - The selected stack is Rust, Tauri 2, React, strict TypeScript, Vite, and SQLite.
 - Data collection, shell integration, command execution, networking, telemetry, and automatic updates are absent from the initial skeleton.
+- A bounded local logging foundation is present but emits no event before onboarding consent.
 - Product requirements are defined in [SPEC.md](SPEC.md); the executable plan is [TODO.md](TODO.md).
 
 ## Development

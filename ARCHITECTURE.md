@@ -32,6 +32,8 @@ SQLite, filesystem, Git, shell-history and platform adapters
 
 The `dev-recall-persistence` crate implements the first SQLite boundary with SQLx 0.8.6. ADR-0011 narrows its features to Tokio runtime, SQLite, and migrations and embeds immutable SQL without query macros. The adapter owns a maximum of four connections, bounded SQLite worker buffers and statement cache, acquisition/busy/idle/lifetime timeouts, explicit close, foreign keys, full synchronous mode, and rollback journal mode. It accepts only a canonical application-data directory, constructs the database filename internally, rejects existing non-files/symlinks, and creates a private file on Unix. The desktop composition root does not initialize it yet, so no user data is currently persisted.
 
+The `dev-recall-observability` crate provides bounded local JSON-lines logging without a production dependency. Its event API uses closed enums and numeric values only, excluding arbitrary commands, notes, paths, headers, credentials, and error text by construction. The Tauri composition root owns the logger. Before onboarding consent it creates only an empty application-data-scoped log and performs retention cleanup; no event is emitted. Defaults are a 1 MiB active file, five archives, and seven-day retention, with bounded configurable limits and explicit clearing.
+
 The frontend never receives unrestricted filesystem, database, environment, shell, or process access. Rust validates every request and returns typed, sanitized errors. Domain and application crates remain independent of Tauri.
 
 ## Proposed repository structure
@@ -41,6 +43,7 @@ apps/desktop/             React/Vite presentation
 apps/desktop/src-tauri/   narrow desktop composition root
 crates/domain/            entities and invariants
 crates/application/       use cases and ports
+crates/observability/     bounded privacy-safe local diagnostics
 crates/persistence/       SQLite repositories and migrations
 crates/privacy/           redaction and retention policy
 crates/terminal-history/  bounded import parsers

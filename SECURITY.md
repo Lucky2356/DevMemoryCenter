@@ -4,7 +4,7 @@
 
 Dev Recall is local-first, deny-by-default, and non-executing. The MVP must not provide generic shell execution, arbitrary file access, remote content, cloud sync, telemetry, or elevated administration.
 
-The current desktop foundation collects and persists no user data. It exposes only the bounded, read-only `get_application_health` command; the command returns fixed protocol metadata and does not inspect the host or user data. A separate persistence crate now provides a bounded SQLite connection and initial non-sensitive owner schema, but the desktop composition root does not initialize it yet. The bundled SQLite version limitation is recorded in `SECURITY_FINDINGS.md`.
+The current desktop foundation collects and persists no user data. It exposes only the bounded, read-only `get_application_health` command; the command returns fixed protocol metadata and does not inspect the host or user data. The composition root owns a bounded local logger but emits no event before onboarding consent. A separate persistence crate provides a bounded SQLite connection and initial non-sensitive owner schema, but the desktop composition root does not initialize it yet. The bundled SQLite version limitation is recorded in `SECURITY_FINDINGS.md`.
 
 ## Core controls
 
@@ -15,7 +15,7 @@ The current desktop foundation collects and persists no user data. It exposes on
 - Use narrow typed IPC commands with sanitized error codes and explicit request limits.
 - Reconstruct outbound IPC payloads from validated fields, reject unexpected successful-response fields, and replace unrecognized errors instead of stringifying them.
 - Use parameterized SQL, migrations, foreign keys, constraints, and bounded connections.
-- Use structured local logs with rotation/retention; exclude commands, secrets, notes, source, headers, cookies, full environment dumps, and unnecessary full paths.
+- Use the closed structured-event API for local logs with rotation/retention; arbitrary string context, commands, secrets, notes, source, headers, cookies, environment dumps, and paths are not accepted.
 - Own and cancel every background task; bound queues and caches.
 
 ## Vulnerability reporting

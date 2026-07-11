@@ -15,3 +15,4 @@ All notable changes will be documented here. The project has no release yet.
 - Added a bounded SQLite persistence crate, embedded immutable initial migration, private application-database path handling, and explicit shutdown.
 - Added migration compatibility tests for empty and representative populated databases plus fail-closed applied-checksum validation.
 - Added reproducible Rust dependency audit/deny policy and CI gates, remediated High XML parser advisories, and raised the security baseline to Rust 1.88.
+- Added privacy-safe structured local logging with closed event fields, bounded rotation, retention, private Unix permissions, and explicit clearing.

@@ -6,7 +6,7 @@ Phase 1 — Application foundation
 
 ### In progress
 
-None. Rust dependency security gates and the parser advisory remediation are complete.
+None. The bounded privacy-safe local logging foundation is complete.
 
 ### Ready
 
@@ -14,7 +14,7 @@ None. Rust dependency security gates and the parser advisory remediation are com
 
 - [x] Compare maintained SQLite Rust drivers and document the selected dependency.
 - [x] Test migrations from empty and representative databases.
-- [ ] Add privacy-safe structured local logging with rotation and retention.
+- [x] Add privacy-safe structured local logging with rotation and retention.
 - [x] Configure `cargo-deny` and Rust/frontend dependency audits.
 - [ ] Add bounded repository and history secret scanning.
 - [ ] Add application-owned background-operation lifecycle and shutdown tests.
@@ -111,3 +111,4 @@ None. Rust dependency security gates and the parser advisory remediation are com
 - [x] Add the bounded SQLx persistence crate, private database-file setup, and immutable initial owner migration.
 - [x] Test the initial migration from an empty database, preserve a representative populated database on rerun, and reject changed applied checksums.
 - [x] Install and configure Rust audit tooling, remediate vulnerable parser dependencies, document residual exceptions, and add dependency-security CI gates.
+- [x] Add the closed-schema local logger with bounded JSON lines, rotation, retention, private Unix permissions, explicit clearing, and Tauri ownership.

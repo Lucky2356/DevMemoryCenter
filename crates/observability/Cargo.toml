@@ -1,0 +1,10 @@
+[package]
+name = "dev-recall-observability"
+version = "0.1.0"
+description = "Privacy-safe bounded local logging for Dev Recall"
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dev-dependencies]
+serde_json = "1.0.150"

@@ -1,5 +1,9 @@
 [workspace]
-members = ["apps/desktop/src-tauri", "crates/persistence"]
+members = [
+  "apps/desktop/src-tauri",
+  "crates/observability",
+  "crates/persistence",
+]
 resolver = "3"
 
 [workspace.package]

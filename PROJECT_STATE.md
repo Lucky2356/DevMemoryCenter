@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Installed and configured Rust dependency security tooling, remediated vulnerable parser dependencies, and added CI audit gates.
+Added bounded privacy-safe structured local logging with rotation, retention, clearing, and Tauri ownership.
 
 ## Work in progress
 
-None. Dependency security gates pass locally; persistence remains intentionally uninitialized by the desktop application.
+None. The logger is managed by the desktop application but emits no event before onboarding consent.
 
 ## Completed
 
@@ -49,11 +49,15 @@ None. Dependency security gates pass locally; persistence remains intentionally 
 - Added `.cargo/audit.toml` and `deny.toml` with Windows/Linux target policy, approved licenses, crates.io-only sources, duplicate warnings, and narrow documented advisory exceptions.
 - Updated `plist 1.8.0` to `1.10.0`, `quick-xml 0.38.4` to `0.41.0`, and `time 0.3.45` to `0.3.53`, resolving two High and one Medium RustSec advisories.
 - Added ADR-0012 for the security-driven Rust 1.88 MSRV and a dedicated CI job that installs locked security-tool versions and runs both Rust dependency gates.
+- Added `dev-recall-observability` with a closed JSON-lines schema: fixed levels, components, event codes, numeric operation IDs, and at most eight numeric context metrics.
+- Added synchronous mutex-serialized writes with no background task, a 1 MiB active file, five archives, seven-day retention, bounded custom limits, oversized/excess archive cleanup, and explicit clearing.
+- Added fixed application-data log paths, non-file/symlink rejection, `0700`/`0600` Unix permissions, sanitized typed errors, and tests for concurrent writers, rotation, retention, bounds, clearing, and unsafe targets.
+- Added ADR-0013 and connected logger ownership to the Tauri composition root without emitting pre-consent events.
 
 ## Tests passed
 
 - `npm run test`: 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
-- `cargo test --workspace --all-features`: 16 Rust unit tests passed; doc tests passed.
+- `cargo test --workspace --all-features`: 25 Rust unit tests passed; doc tests passed.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
@@ -86,6 +90,9 @@ None. Dependency security gates pass locally; persistence remains intentionally 
 - Automated RustSec scanning found and the lockfile update removed RUSTSEC-2026-0194, RUSTSEC-2026-0195, and RUSTSEC-2026-0009.
 - `cargo tree --workspace --all-features --target all -i rsa` confirmed that the RSA advisory recorded by SQLx's disabled optional MySQL backend has no active dependency path.
 - Cargo-deny verified only crates.io sources, the reviewed license set, no active vulnerability advisory, and no new unsound advisory beyond the documented Tauri Linux GLib exception.
+- Observability regression tests verify fixed-schema valid JSON, no arbitrary string context surface, bounded metrics/files/archives, serialized concurrent writes, startup retention, oversized/excess cleanup, explicit clearing, and unsafe path rejection.
+- The desktop composition root emits no log event before onboarding consent; current startup creates only an empty local log file and performs bounded retention maintenance.
+- The observability crate adds no production dependency, network access, shell/process capability, background thread, unbounded queue, or raw error logging.
 
 ## Performance measurements
 
@@ -93,6 +100,7 @@ None. Dependency security gates pass locally; persistence remains intentionally 
 - Persistence tests including empty migration, 128-record preservation, checksum rejection, constrained writes, explicit close, and reopen completed in approximately 0.08 seconds on the focused Windows run; this is a regression-test observation, not a production benchmark.
 - The pool permits at most four SQLite worker connections, keeps zero minimum idle connections, and bounds command buffers at 32, row buffers at 128, and statement caches at 64 per connection.
 - The persistence crate is not linked into the desktop package, so it adds no current desktop runtime threads or binary payload. Re-measure when the composition root begins owning a database.
+- Focused observability tests completed in approximately 0.04 seconds on Windows. The default log budget is approximately 6 MiB across one active file and five archives, with no idle polling or background worker.
 
 ## Known issues
 
@@ -108,6 +116,8 @@ None. Dependency security gates pass locally; persistence remains intentionally 
 - SQLx 0.8.6 bundles SQLite 3.46.0; later upstream security fixes require a driver/native-engine upgrade before FTS5 or release.
 - Tauri's Linux backend retains unmaintained GTK3 bindings and a documented GLib iterator unsoundness exception; Dev Recall does not call the affected API, but Linux release readiness remains blocked on review/upstream migration.
 - SQLx's disabled optional MySQL backend records an RSA advisory in `Cargo.lock`; the backend is absent from the active graph and the exact audit exception must not be broadened.
+- Logger consent, configurable retention, and clearing are not yet exposed in Privacy & Data UI; until consent state exists, the runtime intentionally emits no events.
+- Windows log permissions inherit the application-data ACL and still require representative packaged permission verification; Unix creation and fail-closed permission checks are covered by code/tests.
 
 ## Security findings
 
@@ -122,11 +132,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Add privacy-safe structured local logging with rotation and retention.
+Add bounded repository and history secret scanning.
 
 ## Last stable commit
 
-`d24a68e` (`test: cover SQLite migration compatibility`) is the stable baseline preceding this work unit.
+`10646eb` (`security: add Rust dependency audit gates`) is the stable baseline preceding this work unit.
 
 ## Commands to verify
 
