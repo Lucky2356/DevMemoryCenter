@@ -24,7 +24,7 @@ Do not put secrets or personal command history in reports. Record repository fin
 
 ## Dependency and release security
 
-Dependencies require necessity, maintenance, license, vulnerability, platform, permission, and transitive-impact review. Git branch dependencies, remote runtime code, and unnecessary install scripts are prohibited. Auto-update remains disabled until signed release infrastructure and downgrade protection are designed and tested.
+Dependencies require necessity, maintenance, license, vulnerability, platform, permission, and transitive-impact review. Git branch dependencies, remote runtime code, and unnecessary install scripts are prohibited. `cargo audit`, `cargo deny check`, and `npm audit --audit-level=high` are required gates. Reasoned exceptions are narrow, visible in repository policy, and documented in `SECURITY_FINDINGS.md`. Auto-update remains disabled until signed release infrastructure and downgrade protection are designed and tested.
 
 ## Protection limits
 

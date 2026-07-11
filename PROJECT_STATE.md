@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Added migration compatibility coverage for the empty and representative populated database states.
+Installed and configured Rust dependency security tooling, remediated vulnerable parser dependencies, and added CI audit gates.
 
 ## Work in progress
 
-None. The migration tests are complete; persistence remains intentionally uninitialized by the desktop application.
+None. Dependency security gates pass locally; persistence remains intentionally uninitialized by the desktop application.
 
 ## Completed
 
@@ -37,7 +37,7 @@ None. The migration tests are complete; persistence remains intentionally uninit
 - Added localized English/Russian messages for the fixed `invalid_request`, `invalid_response`, and `operation_failed` error keys.
 - Compared SQLx 0.8.6, rusqlite 0.40.1, and Diesel 2.3.11 against migration, concurrency, scope, native packaging, license, security-history, and project-fit criteria.
 - Added ADR-0010 selecting SQLx 0.8.6 with defaults disabled and only `macros`, `migrate`, `runtime-tokio`, and bundled `sqlite` features.
-- Preserved the Rust 1.85 MSRV by deferring SQLx 0.9.0, which declares Rust 1.94, and recorded rusqlite as the fallback if implementation gates fail.
+- Initially preserved the Rust 1.85 MSRV while deferring SQLx 0.9.0, which declares Rust 1.94, and recorded rusqlite as the fallback if implementation gates fail.
 - Added `dev-recall-persistence` with SQLx 0.8.6, a maximum of four connections, bounded worker buffers and statement cache, acquisition/busy/idle/lifetime timeouts, foreign keys, full synchronous mode, rollback journal mode, and explicit close.
 - Added canonical application-data directory handling, an internally fixed database filename, non-file/symlink rejection, a 4,096-unit path limit, and fail-closed Unix permission validation with `0600` creation.
 - Added embedded checksum-validated migration `0001_initial.sql` with a strict `owners` table, stable-ID/timestamp constraints, and a single-local-owner index.
@@ -45,6 +45,10 @@ None. The migration tests are complete; persistence remains intentionally uninit
 - Installed user-scoped Rust 1.85.0 and verified the full workspace against its declared MSRV.
 - Added deterministic migration tests covering an empty database, a representative database with 128 synthetic owner records, repeat migration execution, preserved sentinel records, and rejection of a changed applied-migration checksum.
 - Documented that previous-version upgrade coverage becomes mandatory with migration version 2; no previous schema version exists while `0001_initial.sql` is the sole migration.
+- Installed user-scoped `cargo-audit 0.22.2`, `cargo-deny 0.20.2`, and Rust 1.88.0 without system-wide changes.
+- Added `.cargo/audit.toml` and `deny.toml` with Windows/Linux target policy, approved licenses, crates.io-only sources, duplicate warnings, and narrow documented advisory exceptions.
+- Updated `plist 1.8.0` to `1.10.0`, `quick-xml 0.38.4` to `0.41.0`, and `time 0.3.45` to `0.3.53`, resolving two High and one Medium RustSec advisories.
+- Added ADR-0012 for the security-driven Rust 1.88 MSRV and a dedicated CI job that installs locked security-tool versions and runs both Rust dependency gates.
 
 ## Tests passed
 
@@ -53,12 +57,12 @@ None. The migration tests are complete; persistence remains intentionally uninit
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
-- `cargo +1.85.0 check --workspace --all-targets` passed with the Rust-aware compatible dependency resolution.
+- `cargo +1.88.0 check --workspace --all-targets` passed against the new declared MSRV.
+- `cargo audit` passed with one committed exception for an inactive SQLx MySQL/RSA lockfile package.
+- `cargo deny check` passed advisory, license, ban, and source policy for the Windows/Linux all-feature graph; duplicate versions remain warnings.
 
 ## Checks not run
 
-- `cargo audit`: attempted but unavailable because `cargo-audit` is not installed. Install deliberately, then run `cargo audit`; residual risk is an unverified Rust advisory database scan.
-- `cargo deny check`: attempted but unavailable because `cargo-deny` is not installed and policy configuration is a Phase 1 task. Residual risk is unverified Rust license/advisory/duplicate policy.
 - Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
 - The GitHub-hosted workflow itself has not run because no push was authorized; workflow success on both runner images remains externally unverified.
 
@@ -79,6 +83,9 @@ None. The migration tests are complete; persistence remains intentionally uninit
 - Migration compatibility regression tests verify that 128 bounded synthetic records survive a close/reopen migration cycle and that a changed checksum for migration version 1 fails closed with a version-mismatch error.
 - Repository scan for common token, private-key, and assigned-secret patterns found no candidate sensitive data; migration fixtures contain only deterministic synthetic identifiers.
 - Manual RustSec review confirmed SQLx 0.8.6 and libsqlite3-sys 0.30.1 exceed their recorded patched boundaries. The older bundled SQLite engine risk is recorded separately in `SECURITY_FINDINGS.md`.
+- Automated RustSec scanning found and the lockfile update removed RUSTSEC-2026-0194, RUSTSEC-2026-0195, and RUSTSEC-2026-0009.
+- `cargo tree --workspace --all-features --target all -i rsa` confirmed that the RSA advisory recorded by SQLx's disabled optional MySQL backend has no active dependency path.
+- Cargo-deny verified only crates.io sources, the reviewed license set, no active vulnerability advisory, and no new unsound advisory beyond the documented Tauri Linux GLib exception.
 
 ## Performance measurements
 
@@ -91,7 +98,6 @@ None. The migration tests are complete; persistence remains intentionally uninit
 
 - Global `cargo-tauri` is not installed; the verified repository-local npm CLI is used.
 - Linux prerequisites and builds remain unverified from this Windows host.
-- `cargo-audit` and `cargo-deny` are unavailable and were not installed automatically.
 - The application currently has only the foundation status screen; all MVP features remain planned.
 - CI remains unverified on GitHub until an explicitly authorized push triggers it.
 - Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
@@ -100,10 +106,12 @@ None. The migration tests are complete; persistence remains intentionally uninit
 - The health adapter is not yet called by a screen; it establishes and tests the first contract without fabricating runtime health UI behavior.
 - The persistence crate is not initialized by the desktop application; no user database, backup, recovery, encryption, or product repository behavior exists yet.
 - SQLx 0.8.6 bundles SQLite 3.46.0; later upstream security fixes require a driver/native-engine upgrade before FTS5 or release.
+- Tauri's Linux backend retains unmaintained GTK3 bindings and a documented GLib iterator unsoundness exception; Dev Recall does not call the affected API, but Linux release readiness remains blocked on review/upstream migration.
+- SQLx's disabled optional MySQL backend records an RSA advisory in `Cargo.lock`; the backend is absent from the active graph and the exact audit exception must not be broadened.
 
 ## Security findings
 
-One Medium finding is documented in `SECURITY_FINDINGS.md`: bundled SQLite 3.46.0 trails later upstream fixes. Current mitigations remove the known arbitrary-SQL/FTS preconditions; upgrade remains required before FTS5 and release.
+`SECURITY_FINDINGS.md` records the resolved High XML/time parser finding and three residual Medium findings: bundled SQLite age, inactive SQLx-MySQL/RSA lockfile metadata, and the Tauri Linux GTK3/GLib lifecycle. No open Critical or High finding remains.
 
 ## Decisions required
 
@@ -118,7 +126,7 @@ Add privacy-safe structured local logging with rotation and retention.
 
 ## Last stable commit
 
-`0a34078` (`feat: add bounded SQLite foundation`) is the stable baseline preceding this work unit.
+`d24a68e` (`test: cover SQLite migration compatibility`) is the stable baseline preceding this work unit.
 
 ## Commands to verify
 
@@ -134,7 +142,9 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-features
 cargo check --workspace --all-targets
-cargo +1.85.0 check --workspace --all-targets
+cargo +1.88.0 check --workspace --all-targets
+cargo audit
+cargo deny check
 npm run tauri -- info
 npm run tauri -- build --config apps/desktop/src-tauri/tauri.conf.json --debug
 ```

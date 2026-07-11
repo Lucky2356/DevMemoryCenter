@@ -14,3 +14,4 @@ All notable changes will be documented here. The project has no release yet.
 - Selected a minimal SQLite-only SQLx 0.8 dependency profile after a documented driver, MSRV, security, and packaging comparison.
 - Added a bounded SQLite persistence crate, embedded immutable initial migration, private application-database path handling, and explicit shutdown.
 - Added migration compatibility tests for empty and representative populated databases plus fail-closed applied-checksum validation.
+- Added reproducible Rust dependency audit/deny policy and CI gates, remediated High XML parser advisories, and raised the security baseline to Rust 1.88.

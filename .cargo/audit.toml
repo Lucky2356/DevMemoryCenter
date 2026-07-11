@@ -1,0 +1,25 @@
+[advisories]
+# SQLx's facade records its disabled MySQL backend in Cargo.lock. The only
+# remaining vulnerability is in that unreachable optional backend; the active
+# graph is enforced separately by cargo-deny and cargo-tree review.
+ignore = ["RUSTSEC-2023-0071"]
+informational_warnings = ["unmaintained", "unsound"]
+severity_threshold = "low"
+
+[database]
+fetch = true
+stale = false
+
+[output]
+deny = []
+format = "terminal"
+quiet = false
+show_tree = true
+
+[target]
+arch = ["x86_64"]
+os = ["linux", "windows"]
+
+[yanked]
+enabled = true
+update_index = true

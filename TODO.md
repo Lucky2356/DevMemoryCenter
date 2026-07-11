@@ -6,7 +6,7 @@ Phase 1 — Application foundation
 
 ### In progress
 
-None. Migration compatibility coverage for the current initial schema is complete.
+None. Rust dependency security gates and the parser advisory remediation are complete.
 
 ### Ready
 
@@ -15,7 +15,8 @@ None. Migration compatibility coverage for the current initial schema is complet
 - [x] Compare maintained SQLite Rust drivers and document the selected dependency.
 - [x] Test migrations from empty and representative databases.
 - [ ] Add privacy-safe structured local logging with rotation and retention.
-- [ ] Configure `cargo-deny`, dependency audits, frontend audits, and secret scanning.
+- [x] Configure `cargo-deny` and Rust/frontend dependency audits.
+- [ ] Add bounded repository and history secret scanning.
 - [ ] Add application-owned background-operation lifecycle and shutdown tests.
 
 #### Phase 2 — Local projects
@@ -109,3 +110,4 @@ None. Migration compatibility coverage for the current initial schema is complet
 - [x] Compare SQLx, rusqlite, and Diesel and select a minimal SQLx 0.8 SQLite dependency profile in ADR-0010.
 - [x] Add the bounded SQLx persistence crate, private database-file setup, and immutable initial owner migration.
 - [x] Test the initial migration from an empty database, preserve a representative populated database on rerun, and reject changed applied checksums.
+- [x] Install and configure Rust audit tooling, remediate vulnerable parser dependencies, document residual exceptions, and add dependency-security CI gates.

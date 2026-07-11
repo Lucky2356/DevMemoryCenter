@@ -79,10 +79,10 @@ impl DatabaseConfig {
             return Err(DatabaseConfigError::InvalidDirectory);
         }
 
-        if let Ok(database_metadata) = fs::symlink_metadata(&database_path) {
-            if !database_metadata.is_file() || database_metadata.file_type().is_symlink() {
-                return Err(DatabaseConfigError::UnsafeDatabaseFile);
-            }
+        if let Ok(database_metadata) = fs::symlink_metadata(&database_path)
+            && (!database_metadata.is_file() || database_metadata.file_type().is_symlink())
+        {
+            return Err(DatabaseConfigError::UnsafeDatabaseFile);
         }
 
         Ok(Self { database_path })
