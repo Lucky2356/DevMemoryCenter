@@ -1,6 +1,7 @@
 import { en } from "./locales/en";
 import { ru } from "./locales/ru";
 import type { Messages, PluralCategory } from "./locales/types";
+import type { NavigationId, ScreenStateKind } from "./models/app-shell";
 
 export const supportedLocales = ["en", "ru"] as const;
 
@@ -20,7 +21,10 @@ const pluralCategories: readonly PluralCategory[] = [
   "other",
 ];
 
-export type MessageKey = Exclude<keyof Messages, "durationMinutes">;
+export type MessageKey = Exclude<
+  keyof Messages,
+  "durationMinutes" | "navigation" | "screenDescriptions" | "screenStates"
+>;
 
 function tryResolveLocale(language: string): SupportedLocale | undefined {
   const normalized = language.trim().toLowerCase();
@@ -59,6 +63,27 @@ export function languageTag(locale: SupportedLocale): string {
 
 export function translate(locale: SupportedLocale, key: MessageKey): string {
   return resources[locale][key];
+}
+
+export function navigationLabel(
+  locale: SupportedLocale,
+  navigationId: NavigationId,
+): string {
+  return resources[locale].navigation[navigationId];
+}
+
+export function screenDescription(
+  locale: SupportedLocale,
+  navigationId: NavigationId,
+): string {
+  return resources[locale].screenDescriptions[navigationId];
+}
+
+export function screenStateMessage(
+  locale: SupportedLocale,
+  state: ScreenStateKind,
+): Readonly<{ title: string; body: string }> {
+  return resources[locale].screenStates[state];
 }
 
 export function formatNumber(locale: SupportedLocale, value: number): string {

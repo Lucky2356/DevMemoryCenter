@@ -1641,3 +1641,26 @@ At all times preserve this invariant:
 If a proposed feature violates this invariant, do not implement it.
 
 Document the conflict and request a product decision.
+
+# 51. Autonomous planning
+
+Before starting a task:
+
+- verify whether the task is already completed;
+- avoid duplicating existing functionality;
+- prefer completing partially finished work before starting new work;
+- never work on two unrelated tasks simultaneously.
+
+When multiple tasks are available:
+
+- choose the earliest task in TODO.md;
+- do not skip phases;
+- complete current phase before starting another one.
+
+When a phase is complete:
+
+- verify SPEC.md requirements for that phase;
+- add missing tasks if necessary;
+- only then continue.
+
+Always leave the repository in a releasable state.

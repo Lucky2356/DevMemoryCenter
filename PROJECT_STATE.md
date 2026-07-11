@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Completed the English/Russian localization foundation for the application shell and pre-webview startup failures.
+Added responsive, localized, keyboard-accessible application navigation and a shared renderer for loading, empty, normal, error, and disabled screen states.
 
 ## Work in progress
 
-None. The localization task is complete; the next Phase 1 task has not started.
+None. The navigation task is complete; the next Phase 1 task has not started.
 
 ## Completed
 
@@ -27,12 +27,16 @@ None. The localization task is complete; the next Phase 1 task has not started.
 - Moved frontend shell strings into typed English/Russian resource modules.
 - Added ordered locale resolution, document language/title application, and `Intl` number/date/duration formatting with plural rules and invalid-duration rejection.
 - Added embedded English/Russian Rust resources for safe startup failures without exposing internal Tauri errors.
+- Added the eight `SPEC.md` navigation sections using bounded route identifiers and native keyboard controls.
+- Added a skip link, visible focus, semantic landmarks, current-page state, polite content announcements, and responsive small-window layout.
+- Added localized screen descriptions and honest shared loading, empty, normal, error, and disabled state semantics.
 
 ## Tests passed
 
-- `npm run test`: 8 localization tests passed.
+- `npm run test`: 16 localization and application-shell component tests passed.
 - `cargo test --workspace --all-features`: 5 Rust unit tests passed; doc tests passed.
 - `npm ci --ignore-scripts`: locked dependency installation completed without lifecycle scripts.
+- Local browser QA passed for Russian rendering, navigation changes, skip-link focus, disabled-state messaging, and the 640-pixel responsive layout.
 
 ## Checks not run
 
@@ -48,10 +52,11 @@ None. The localization task is complete; the next Phase 1 task has not started.
 - Source review found no `unsafe`, shell plugin, generic IPC command, remote content, user-data persistence, or unsafe React HTML in the skeleton.
 - CI workflow review confirmed top-level `contents: read`, non-persisted checkout credentials, full 40-character action SHAs, no cache, no secrets, no artifact upload, and no publish/release step.
 - Localization review confirmed no remote locale loading, no persistence or transmission of language preferences, no unsafe HTML fallback, and no internal Tauri error exposure.
+- UI review confirmed bounded navigation state, text-only rendering, no IPC/network/storage behavior, and accessible loading/error/disabled semantics.
 
 ## Performance measurements
 
-- Frontend production build completed in approximately 0.2 seconds; output was 192.56 kB JavaScript (61.02 kB gzip) and 1.18 kB CSS (0.59 kB gzip) after localization resources were added.
+- Frontend production build completed in approximately 0.2 seconds; output was 198.48 kB JavaScript (63.05 kB gzip) and 3.59 kB CSS (1.34 kB gzip) after the navigation shell was added.
 - No runtime/idle measurement was taken; the skeleton is not an MVP and initial acceptance budgets remain in `docs/performance/PERFORMANCE_BUDGETS.md`.
 
 ## Known issues
@@ -62,6 +67,7 @@ None. The localization task is complete; the next Phase 1 task has not started.
 - The application currently has only the foundation status screen; all MVP features remain planned.
 - CI remains unverified on GitHub until an explicitly authorized push triggers it.
 - Locale selection currently follows system/browser preferences; a user-selected persisted override is not implemented yet.
+- Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
 
 ## Security findings
 
@@ -76,11 +82,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Add accessible application navigation with localized loading, empty, normal, error, and disabled states.
+Add explicit light, dark, and system theme support with a user-selectable, reduced-motion-aware presentation boundary.
 
 ## Last stable commit
 
-`HEAD` after the localization commit (`feat: complete application localization foundation`).
+`HEAD` after the navigation commit (`feat: add accessible application shell navigation`).
 
 ## Commands to verify
 

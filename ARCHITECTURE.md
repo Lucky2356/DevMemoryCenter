@@ -88,6 +88,10 @@ Long operations have one owner, bounded queues and concurrency, progress, cancel
 
 English and Russian resources are compiled into the application; no locale bundle is downloaded at runtime. The presentation layer resolves browser preferences and formats locale-sensitive values with platform `Intl` support. A small Rust boundary embeds localized safe startup errors for failures that occur before the webview exists. Unsupported locales fail predictably to English, and reusable components do not contain user-facing fallback strings.
 
+## Presentation shell
+
+The React shell keeps navigation state in one bounded `NavigationId` union and does not introduce a router dependency before URL/history behavior is required. Native controls, semantic landmarks, a skip link, visible focus, `aria-current`, and live-region/status semantics provide the keyboard and screen-reader foundation. A shared discriminated screen-state renderer prevents individual screens from omitting loading, empty, normal, error, or disabled behavior.
+
 ## Architecture risks
 
 - History formats omit working directory, exit status, and timestamps; missing metadata must remain explicit.

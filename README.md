@@ -15,7 +15,7 @@ Dev Recall is a planned local-first desktop application for restoring context ar
 
 ## Development
 
-See [docs/development/BUILDING.md](docs/development/BUILDING.md) and [docs/development/LOCALIZATION.md](docs/development/LOCALIZATION.md). Security and privacy constraints are described in [SECURITY.md](SECURITY.md), [THREAT_MODEL.md](THREAT_MODEL.md), and [PRIVACY.md](PRIVACY.md).
+See [docs/development/BUILDING.md](docs/development/BUILDING.md), [docs/development/LOCALIZATION.md](docs/development/LOCALIZATION.md), and [docs/development/UI_FOUNDATION.md](docs/development/UI_FOUNDATION.md). Security and privacy constraints are described in [SECURITY.md](SECURITY.md), [THREAT_MODEL.md](THREAT_MODEL.md), and [PRIVACY.md](PRIVACY.md).
 
 ## License
 
