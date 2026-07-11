@@ -2,17 +2,16 @@
 
 ## Current phase
 
-Phase 0 — Research and architecture
+Phase 1 — Application foundation
 
 ### In progress
 
-None. The first agent run is complete; Phase 1 has not started.
+None. The Windows/Linux CI task is complete.
 
 ### Ready
 
 #### Phase 1 — Application foundation
 
-- [ ] Add CI for Windows and Linux with minimal permissions and commit-SHA-pinned actions.
 - [ ] Add English/Russian localization infrastructure and move all shell strings into locale resources.
 - [ ] Add accessible application navigation with loading, empty, error, normal, and disabled states.
 - [ ] Add light, dark, and system theme support with reduced-motion behavior.
@@ -107,3 +106,4 @@ None. The first agent run is complete; Phase 1 has not started.
 - [x] Record nine initial ADRs.
 - [x] Create the minimal Tauri 2, React, strict TypeScript, and Vite shell with no collection, persistence, IPC commands, or MVP feature behavior.
 - [x] Verify formatting, linting, type checks, tests, frontend build, Rust check/clippy, npm audit, Tauri environment, and Windows Tauri debug build.
+- [x] Add read-only Windows/Linux CI with fixed runner images, full-SHA-pinned actions, locked dependency installation, frontend/Rust checks, npm audit, and Tauri debug builds.

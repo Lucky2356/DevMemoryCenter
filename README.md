@@ -1,5 +1,7 @@
 # Dev Recall
 
+[![CI](https://github.com/Lucky2356/DevMemoryCenter/actions/workflows/ci.yml/badge.svg)](https://github.com/Lucky2356/DevMemoryCenter/actions/workflows/ci.yml)
+
 Local memory for developers and system administrators.
 
 Dev Recall is a planned local-first desktop application for restoring context around local development work. The repository currently contains the Phase 0 architecture and a minimal application foundation only; MVP features are not implemented yet.

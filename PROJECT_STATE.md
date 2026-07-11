@@ -2,15 +2,15 @@
 
 ## Current phase
 
-Phase 0 — Research and architecture.
+Phase 1 — Application foundation.
 
 ## Last completed task
 
-Completed the first agent run: prepared Phase 0 documentation and verified a minimal compileable desktop shell without implementing MVP features.
+Added Windows/Linux continuous integration with minimal repository permissions, full-SHA-pinned actions, locked dependency installation, frontend/Rust checks, npm audit, and Tauri debug builds.
 
 ## Work in progress
 
-None. Phase 1 has not started.
+None. The CI task is complete; the next Phase 1 task has not started.
 
 ## Completed
 
@@ -22,23 +22,28 @@ None. Phase 1 has not started.
 - Added a localized React/Vite shell with strict TypeScript and CSS Modules.
 - Added a Safe Rust Tauri composition root with no application IPC commands, no plugins, empty capabilities, strict CSP, no collection, and no persistence.
 - Generated local placeholder application icons required by the Windows resource build.
+- Added `.github/workflows/ci.yml` for fixed Ubuntu 24.04 and Windows 2025 runners with no publishing or artifact upload.
+- Added a visible CI status badge and documented CI security/update policy.
 
 ## Tests passed
 
 - `npm run test`: 3 localization tests passed.
 - `cargo test --workspace --all-features`: 1 Rust unit test passed; doc tests passed.
+- `npm ci --ignore-scripts`: locked dependency installation completed without lifecycle scripts.
 
 ## Checks not run
 
 - `cargo audit`: not run because `cargo-audit` is not installed. Install deliberately, then run `cargo audit`; residual risk is an unverified Rust advisory database scan.
 - `cargo deny check`: not run because `cargo-deny` is not installed and policy configuration is a Phase 1 task. Residual risk is unverified Rust license/advisory/duplicate policy.
 - Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
+- The GitHub-hosted workflow itself has not run because no push was authorized; workflow success on both runner images remains externally unverified.
 
 ## Security checks passed
 
 - Manual threat/privacy review completed and security invariants documented.
 - `npm audit --audit-level=high`: zero known vulnerabilities.
 - Source review found no `unsafe`, shell plugin, generic IPC command, remote content, user-data persistence, or unsafe React HTML in the skeleton.
+- CI workflow review confirmed top-level `contents: read`, non-persisted checkout credentials, full 40-character action SHAs, no cache, no secrets, no artifact upload, and no publish/release step.
 
 ## Performance measurements
 
@@ -51,6 +56,7 @@ None. Phase 1 has not started.
 - Linux prerequisites and builds remain unverified from this Windows host.
 - `cargo-audit` and `cargo-deny` are unavailable and were not installed automatically.
 - The application currently has only the foundation status screen; all MVP features remain planned.
+- CI remains unverified on GitHub until an explicitly authorized push triggers it.
 
 ## Security findings
 
@@ -58,15 +64,18 @@ No concrete vulnerability found in the initial documentation-only repository.
 
 ## Decisions required
 
-Repository license selection; see `NEEDS_USER_INPUT.md`. This does not block architecture or local development.
+- Repository license selection.
+- Clarify whether the GitHub publication restriction permits the `FUTURE_AI.md` product-boundary document required by `SPEC.md`.
+
+Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local development. No push or publication is authorized.
 
 ## Next task
 
-Add Phase 1 Windows/Linux CI with minimal permissions, commit-SHA-pinned actions, frontend/Rust checks, and no publishing.
+Complete the existing English/Russian localization foundation and ensure every application-shell string, including the document title and startup failure message, is supplied through an appropriate locale-aware boundary.
 
 ## Last stable commit
 
-`HEAD` after the first-run commit (`chore: initialize secure application foundation`).
+`HEAD` after the CI commit (`ci: add Windows and Linux quality gates`).
 
 ## Commands to verify
 

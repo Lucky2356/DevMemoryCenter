@@ -27,3 +27,9 @@ cargo check --workspace --all-targets
 ```
 
 Security tools are separate prerequisites: `cargo audit` and `cargo deny check`.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs the locked frontend and Rust checks plus a Tauri debug build on fixed `ubuntu-24.04` and `windows-2025` [GitHub-hosted runner images](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job). The workflow has read-only repository permissions, persists no checkout credentials, uploads no artifacts, publishes nothing, and pins external actions to full commit SHAs.
+
+The Linux job installs only the desktop development packages required by the [official Tauri prerequisites](https://v2.tauri.app/start/prerequisites/). Dependency caching is disabled to reduce shared supply-chain state. Action SHA updates require verification against the signed upstream releases for [checkout](https://github.com/actions/checkout/releases) and [setup-node](https://github.com/actions/setup-node/releases) before editing the workflow.

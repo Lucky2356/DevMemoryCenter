@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - windows-2025
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.16.0
+          package-manager-cache: false
+
+      - name: Install Linux desktop prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends --yes \
+            build-essential \
+            curl \
+            file \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            libwebkit2gtk-4.1-dev \
+            libxdo-dev \
+            wget
+
+      - name: Set up stable Rust
+        shell: bash
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup override set stable
+
+      - name: Install locked frontend dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Check frontend formatting
+        run: npm run format:check
+
+      - name: Lint frontend
+        run: npm run lint
+
+      - name: Type-check frontend
+        run: npm run typecheck
+
+      - name: Test frontend
+        run: npm run test
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Audit frontend dependencies
+        run: npm audit --audit-level=high
+
+      - name: Check Rust formatting
+        run: cargo fmt --all -- --check
+
+      - name: Lint Rust
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Test Rust
+        run: cargo test --workspace --all-features
+
+      - name: Check Rust workspace
+        run: cargo check --workspace --all-targets
+
+      - name: Build Tauri application
+        run: npm run tauri -- build --config apps/desktop/src-tauri/tauri.conf.json --debug
