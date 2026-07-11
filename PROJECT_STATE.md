@@ -6,11 +6,11 @@ Phase 1 — Application foundation.
 
 ## Last completed task
 
-Compared maintained Rust SQLite drivers and selected a minimal SQLx 0.8 dependency profile in ADR-0010.
+Added a bounded SQLx SQLite persistence crate and immutable initial owner migration.
 
 ## Work in progress
 
-None. The driver selection is documented; SQLx and persistence code have not been added.
+None. The persistence foundation is complete but is intentionally not initialized by the desktop application.
 
 ## Completed
 
@@ -38,14 +38,20 @@ None. The driver selection is documented; SQLx and persistence code have not bee
 - Compared SQLx 0.8.6, rusqlite 0.40.1, and Diesel 2.3.11 against migration, concurrency, scope, native packaging, license, security-history, and project-fit criteria.
 - Added ADR-0010 selecting SQLx 0.8.6 with defaults disabled and only `macros`, `migrate`, `runtime-tokio`, and bundled `sqlite` features.
 - Preserved the Rust 1.85 MSRV by deferring SQLx 0.9.0, which declares Rust 1.94, and recorded rusqlite as the fallback if implementation gates fail.
+- Added `dev-recall-persistence` with SQLx 0.8.6, a maximum of four connections, bounded worker buffers and statement cache, acquisition/busy/idle/lifetime timeouts, foreign keys, full synchronous mode, rollback journal mode, and explicit close.
+- Added canonical application-data directory handling, an internally fixed database filename, non-file/symlink rejection, a 4,096-unit path limit, and fail-closed Unix permission validation with `0600` creation.
+- Added embedded checksum-validated migration `0001_initial.sql` with a strict `owners` table, stable-ID/timestamp constraints, and a single-local-owner index.
+- Added ADR-0011 and removed SQLx macros after the resolved dependency graph showed unrelated database packages; the active graph is SQLite-only and has no database TLS or extension loading.
+- Installed user-scoped Rust 1.85.0 and verified the full workspace against its declared MSRV.
 
 ## Tests passed
 
 - `npm run test`: 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
-- `cargo test --workspace --all-features`: 10 Rust unit tests passed; doc tests passed.
+- `cargo test --workspace --all-features`: 14 Rust unit tests passed; doc tests passed.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
+- `cargo +1.85.0 check --workspace --all-targets` passed with the Rust-aware compatible dependency resolution.
 
 ## Checks not run
 
@@ -53,7 +59,6 @@ None. The driver selection is documented; SQLx and persistence code have not bee
 - `cargo deny check`: not run because `cargo-deny` is not installed and policy configuration is a Phase 1 task. Residual risk is unverified Rust license/advisory/duplicate policy.
 - Linux build and Tauri prerequisites: not run from the Windows host. Verify in Phase 1 CI or a representative Linux environment.
 - The GitHub-hosted workflow itself has not run because no push was authorized; workflow success on both runner images remains externally unverified.
-- Rust 1.85 compatibility of SQLx 0.8.6 was not run because only the current stable 1.96 toolchain is installed and the dependency is not yet part of the workspace. The next task must verify the resolved dependency before commit; the residual risk is that the selected 0.8 line or a transitive dependency may require a higher compiler.
 
 ## Security checks passed
 
@@ -66,13 +71,17 @@ None. The driver selection is documented; SQLx and persistence code have not bee
 - Theme review confirmed bounded state, no storage/network/IPC behavior, native keyboard controls, and reduced-motion handling for presentation transitions.
 - IPC regression tests confirmed oversized/unsafe IDs and unknown fields are rejected, malformed responses fail closed, arbitrary error text is discarded, and rejected input is not serialized.
 - Dependency review confirmed the official Tauri API package has no runtime dependencies or install script; `npm audit --audit-level=high` found zero known vulnerabilities.
-- Driver review confirmed SQLx 0.8.6 is above the `>=0.8.1` patched boundary for RUSTSEC-2024-0363, excludes remote database/TLS features, and does not authorize extension loading or raw-handle access. Final transitive results remain pending until the dependency enters `Cargo.lock`.
+- Driver review confirmed SQLx 0.8.6 is above the `>=0.8.1` patched boundary for RUSTSEC-2024-0363, excludes remote database/TLS features, and does not authorize extension loading or raw-handle access.
+- Resolved-tree review confirmed only SQLx core/SQLite components, bundled `libsqlite3-sys 0.30.1`, and expected Tokio/futures support; MySQL, PostgreSQL, TLS, query macros, and extension-loading features are absent.
+- Database regression tests verify relative/non-file path rejection, explicit pool bounds, foreign keys, WAL disabled, zero virtual tables, migration history, parameterized constraint enforcement, duplicate local-owner rejection, clean reopen, and explicit close.
+- Manual RustSec review confirmed SQLx 0.8.6 and libsqlite3-sys 0.30.1 exceed their recorded patched boundaries. The older bundled SQLite engine risk is recorded separately in `SECURITY_FINDINGS.md`.
 
 ## Performance measurements
 
 - Frontend production build completed in approximately 0.2 seconds; output was 199.81 kB JavaScript (63.49 kB gzip) and 4.89 kB CSS (1.57 kB gzip).
-- This documentation-only task added no runtime code or dependency, so no new runtime measurement was applicable.
-- SQLx creates one SQLite worker thread per connection; ADR-0010 therefore requires a deliberately small pool, bounded worker buffers, and binary/idle measurements when the dependency is added.
+- Persistence tests including create, migrate, constrained writes, explicit close, and reopen completed in approximately 0.34 seconds on the final Windows run; this is a regression-test observation, not a production benchmark.
+- The pool permits at most four SQLite worker connections, keeps zero minimum idle connections, and bounds command buffers at 32, row buffers at 128, and statement caches at 64 per connection.
+- The persistence crate is not linked into the desktop package, so it adds no current desktop runtime threads or binary payload. Re-measure when the composition root begins owning a database.
 
 ## Known issues
 
@@ -85,11 +94,12 @@ None. The driver selection is documented; SQLx and persistence code have not bee
 - Navigation is in-memory only and intentionally does not preserve routes across restart or expose unfinished feature actions.
 - Theme selection is in-memory only and intentionally resets to the system preference until an approved local settings store exists.
 - The health adapter is not yet called by a screen; it establishes and tests the first contract without fabricating runtime health UI behavior.
-- SQLx is selected but not installed; Rust 1.85 compatibility, resolved transitive licenses/advisories, bundled SQLite version, binary delta, and Windows/Linux packaging remain implementation gates.
+- The persistence crate is not initialized by the desktop application; no user database, backup, recovery, encryption, or product repository behavior exists yet.
+- SQLx 0.8.6 bundles SQLite 3.46.0; later upstream security fixes require a driver/native-engine upgrade before FTS5 or release.
 
 ## Security findings
 
-No concrete vulnerability is known in the current repository.
+One Medium finding is documented in `SECURITY_FINDINGS.md`: bundled SQLite 3.46.0 trails later upstream fixes. Current mitigations remove the known arbitrary-SQL/FTS preconditions; upgrade remains required before FTS5 and release.
 
 ## Decisions required
 
@@ -100,11 +110,11 @@ Both decisions are documented in `NEEDS_USER_INPUT.md` and do not block local de
 
 ## Next task
 
-Add the bounded SQLite connection setup and immutable initial migration.
+Test migrations from empty and representative databases.
 
 ## Last stable commit
 
-`HEAD` after the SQLite driver selection commit (`docs: select SQLx SQLite driver`).
+`HEAD` after the bounded SQLite foundation commit (`feat: add bounded SQLite foundation`).
 
 ## Commands to verify
 
@@ -120,6 +130,7 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-features
 cargo check --workspace --all-targets
+cargo +1.85.0 check --workspace --all-targets
 npm run tauri -- info
 npm run tauri -- build --config apps/desktop/src-tauri/tauri.conf.json --debug
 ```

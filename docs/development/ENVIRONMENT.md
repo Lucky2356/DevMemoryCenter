@@ -7,6 +7,7 @@ Verified on 2026-07-11 without installing system-wide dependencies.
 | Operating system | Windows 11 Pro, build 10.0.26200, x64 |
 | Rust | `rustc 1.96.0`, stable `x86_64-pc-windows-msvc` |
 | Cargo | `cargo 1.96.0` |
+| Project MSRV check | User-scoped Rust/Cargo `1.85.0`; full workspace check passed |
 | Installed Rust targets | `x86_64-pc-windows-msvc`, `x86_64-pc-windows-gnu` |
 | Node.js | `v24.16.0` |
 | npm | `11.13.0`; selected by `package-lock.json` |
@@ -18,4 +19,4 @@ Verified on 2026-07-11 without installing system-wide dependencies.
 | Linux prerequisites | Not verifiable on this Windows host |
 | Rust security tools | `cargo-audit` and `cargo-deny` are not installed |
 
-The repository-local Tauri debug build completed successfully. Linux system packages and a Linux build remain CI/target-host checks. Missing Rust security tools were not installed because the first-run rules prohibit system-wide installation without explicit approval.
+The repository-local Tauri debug build completed successfully. Rust 1.85.0 was installed through user-scoped rustup to verify the declared project MSRV after SQLx was added; no system-wide dependency was installed. Linux system packages and a Linux build remain CI/target-host checks. Missing Rust security tools were not installed because dependency-security tooling is a separate planned task.

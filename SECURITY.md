@@ -4,7 +4,7 @@
 
 Dev Recall is local-first, deny-by-default, and non-executing. The MVP must not provide generic shell execution, arbitrary file access, remote content, cloud sync, telemetry, or elevated administration.
 
-The current foundation collects and persists no user data. It exposes only the bounded, read-only `get_application_health` command; the command returns fixed protocol metadata and does not inspect the host or user data.
+The current desktop foundation collects and persists no user data. It exposes only the bounded, read-only `get_application_health` command; the command returns fixed protocol metadata and does not inspect the host or user data. A separate persistence crate now provides a bounded SQLite connection and initial non-sensitive owner schema, but the desktop composition root does not initialize it yet. The bundled SQLite version limitation is recorded in `SECURITY_FINDINGS.md`.
 
 ## Core controls
 

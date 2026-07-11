@@ -30,7 +30,7 @@ ports/interfaces
 SQLite, filesystem, Git, shell-history and platform adapters
 ```
 
-ADR-0010 selects SQLx 0.8 for the planned SQLite adapter, with only Tokio runtime, SQLite, migration, and macro features. The dependency is not installed yet. The adapter will own a small bounded pool and bounded SQLite worker buffers, embed immutable migrations, close connections explicitly on shutdown, and expose only repository interfaces to the application layer.
+The `dev-recall-persistence` crate implements the first SQLite boundary with SQLx 0.8.6. ADR-0011 narrows its features to Tokio runtime, SQLite, and migrations and embeds immutable SQL without query macros. The adapter owns a maximum of four connections, bounded SQLite worker buffers and statement cache, acquisition/busy/idle/lifetime timeouts, explicit close, foreign keys, full synchronous mode, and rollback journal mode. It accepts only a canonical application-data directory, constructs the database filename internally, rejects existing non-files/symlinks, and creates a private file on Unix. The desktop composition root does not initialize it yet, so no user data is currently persisted.
 
 The frontend never receives unrestricted filesystem, database, environment, shell, or process access. Rust validates every request and returns typed, sanitized errors. Domain and application crates remain independent of Tauri.
 

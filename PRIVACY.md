@@ -22,4 +22,4 @@ JSON, CSV, and safe Markdown exports are planned. Exports are re-redacted and CS
 
 ## Current implementation
 
-The initial skeleton does not collect, store, export, or transmit user data.
+The desktop application does not collect, store, export, or transmit user data. The standalone persistence crate can create the initial non-sensitive owner schema for tests and future composition, but it is not initialized by the desktop application.

@@ -12,15 +12,15 @@ The application uses Tauri `2.11.5`, tauri-build `2.6.3`, repository-local Tauri
 
 Serde is required for explicit command request, response, and error serialization. The derive feature is the only enabled direct feature. `serde_json 1.0.150` is a test-only dependency used to verify the exact sanitized wire error and unknown-field rejection. Both were already present transitively through Tauri, so making them direct dependencies does not introduce a new package family.
 
-ADR-0010 selects SQLx 0.8 for the planned SQLite persistence adapter after comparing SQLx, rusqlite, and Diesel. SQLx is not yet present in `Cargo.toml` or `Cargo.lock`. The next persistence task may add version `0.8.6` with default features disabled and only `macros`, `migrate`, `runtime-tokio`, and `sqlite`. This keeps other database drivers, `any`, TLS, JSON integration, regular-expression functions, hooks, and extension loading out of the graph. The `sqlite` feature statically bundles SQLite for a deterministic Windows/Linux baseline.
+ADR-0010 selected SQLx 0.8 after comparing SQLx, rusqlite, and Diesel. The persistence crate now uses SQLx `0.8.6` with default features disabled and only `migrate`, `runtime-tokio`, and `sqlite`. ADR-0011 supersedes the earlier `macros` feature choice: a maintained `MigrationSource` implementation embeds the SQL files without retaining SQLx's unrelated database macro packages. The normal dependency graph contains `sqlx-core`, `sqlx-sqlite`, Tokio/futures support, and `libsqlite3-sys`; it contains no MySQL, PostgreSQL, `any`, TLS, JSON integration, regular-expression functions, hooks, or extension loading.
 
-SQLx 0.9.0 is deliberately deferred because its declared Rust requirement is 1.94 while the workspace declares Rust 1.85. SQLx 0.8.6 does not declare an MSRV in crates.io metadata, so the dependency-addition task must verify Rust 1.85 compatibility before commit. It must also inspect the resolved transitive graph and licenses, run available advisory/policy checks, record the bundled SQLite version, measure the release binary delta, and verify the packaged Windows build. Linux packaging remains a CI or representative-host gate. The SQLx CLI is not selected as a project dependency.
+SQLx 0.9.0 remains deferred because its declared Rust requirement is 1.94 while the workspace declares Rust 1.85. The complete workspace, including SQLx 0.8.6, passed `cargo +1.85.0 check --workspace --all-targets`. Cargo's Rust-aware resolver selected compatible transitive versions, including `home 0.5.11` rather than the newer Rust 1.88-only release. The SQLx CLI is not a project dependency.
 
-The documented review used official SQLx, rusqlite, Diesel, crates.io/docs.rs, and RustSec sources on 2026-07-11. SQLx 0.8.6 is above the fixed boundary for its recorded RUSTSEC-2024-0363 advisory. This does not substitute for auditing the final lockfile.
+The resolved `libsqlite3-sys 0.30.1` bundles SQLite 3.46.0. SQLx 0.8.6 is above the fixed boundary for RUSTSEC-2024-0363, and libsqlite3-sys is above the fixed boundary for RUSTSEC-2022-0090. SQLite's official vulnerability list contains later engine fixes; `SECURITY_FINDINGS.md` records the resulting restriction against enabling FTS5 or releasing with this engine. This manual review does not substitute for `cargo audit` over the final lockfile.
 
 Redaction, UUID, logging, localization, and other feature dependencies remain deferred until the task that needs them includes a focused comparison.
 
-`npm audit` reported zero known vulnerabilities on 2026-07-11. Rust advisory and license-policy scans remain unverified because `cargo-audit` and `cargo-deny` are not installed; no automatic installation was performed.
+`npm audit` reported zero known vulnerabilities on 2026-07-12. Rust advisory and license-policy scans remain unverified because `cargo-audit` and `cargo-deny` are not installed; no automatic installation was performed.
 
 ## Required checks
 
