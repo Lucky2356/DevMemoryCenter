@@ -618,6 +618,10 @@ name = "dev-recall-application"
 version = "0.1.0"
 
 [[package]]
+name = "dev-recall-domain"
+version = "0.1.0"
+
+[[package]]
 name = "dev-recall-observability"
 version = "0.1.0"
 dependencies = [

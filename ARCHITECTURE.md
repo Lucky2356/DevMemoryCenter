@@ -36,6 +36,8 @@ The `dev-recall-observability` crate provides bounded local JSON-lines logging w
 
 The `dev-recall-application` crate provides the application-owned lifecycle boundary for future long-running work without spawning work itself. At most four operations are admitted by the desktop composition root, operation identifiers are nonzero and unique while active, and each permit exposes a scoped cancellation token. Starting shutdown permanently closes admission, signals every active permit, and waits through a condition variable for at most the caller-supplied duration. The Tauri exit path uses a five-second bound. A timed-out operation remains visible to the owner and may complete cleanup; dropping the manager also signals cancellation. Concrete executors must retain and join their own task handles and must not detach work.
 
+The `dev-recall-domain` crate contains the first framework-independent entity. `Project` uses distinct UUID-compatible project and owner identifiers, bounded display/description text, a closed project-type vocabulary, ordered nonnegative millisecond timestamps limited to SQLite's signed integer range, explicit archive state, and per-source privacy consent that defaults to disabled. It retains root and canonical path placeholders only after non-empty domain validation; platform length, absolute-path, canonicalization, traversal, special-path, and symlink checks belong to the next platform boundary and are not claimed here.
+
 The frontend never receives unrestricted filesystem, database, environment, shell, or process access. Rust validates every request and returns typed, sanitized errors. Domain and application crates remain independent of Tauri.
 
 ## Proposed repository structure
@@ -67,9 +69,9 @@ Only modules required by the current phase should be created. The first skeleton
 4. Persistence accepts only validated, redacted domain values through parameterized queries.
 5. OS key stores are a separate trust boundary; unavailable secure storage must fail closed for protected collection.
 
-## Domain prototype
+## Domain model
 
-All persistent entities use stable UUID-compatible identifiers and an `owner_id`. The local MVP creates one internal local owner without embedding single-user assumptions in domain rules.
+All persistent entities use stable UUID-compatible identifiers and an `owner_id`. The local MVP creates one internal local owner without embedding single-user assumptions in domain rules. Only `Project` is implemented; the remaining entries describe the approved incremental model.
 
 - `Project`: identity, owner, display and canonical paths, type, description, timestamps, archive state, privacy settings.
 - `WorkSession`: identity, owner/project, goal, state transitions, timing, summary, next step.

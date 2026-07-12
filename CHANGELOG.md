@@ -19,3 +19,4 @@ All notable changes will be documented here. The project has no release yet.
 - Added bounded fail-closed repository/history secret scanning, a full-history CI gate, and GitHub contribution/security metadata.
 - Corrected Linux observability test fixtures to retain private file permissions during retention tests.
 - Added application-owned background-operation admission, cancellation, cleanup coordination, and bounded desktop shutdown.
+- Added the framework-independent `Project` domain entity with bounded text, UUID-compatible ownership, archive/timestamp invariants, and deny-by-default source consent.

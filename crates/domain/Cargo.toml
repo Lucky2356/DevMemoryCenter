@@ -1,0 +1,7 @@
+[package]
+name = "dev-recall-domain"
+version = "0.1.0"
+description = "Framework-independent domain model for Dev Recall"
+edition.workspace = true
+rust-version.workspace = true
+publish = false
