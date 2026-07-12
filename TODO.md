@@ -2,11 +2,11 @@
 
 ## Current phase
 
-Phase 1 — Application foundation
+Phase 2 — Local projects
 
 ### In progress
 
-None. Bounded repository and reachable-history secret scanning is complete.
+None. Phase 1 is complete; the first Phase 2 domain task is ready.
 
 ### Ready
 
@@ -17,7 +17,7 @@ None. Bounded repository and reachable-history secret scanning is complete.
 - [x] Add privacy-safe structured local logging with rotation and retention.
 - [x] Configure `cargo-deny` and Rust/frontend dependency audits.
 - [x] Add bounded repository and history secret scanning.
-- [ ] Add application-owned background-operation lifecycle and shutdown tests.
+- [x] Add application-owned background-operation lifecycle and shutdown tests.
 
 #### Phase 2 — Local projects
 
@@ -115,3 +115,4 @@ None. Bounded repository and reachable-history secret scanning is complete.
 - [x] Add fail-closed repository and reachable-history secret scanning, regression tests, a full-history CI gate, and secure GitHub contribution metadata.
 - [x] Correct Unix observability archive fixtures to preserve private `0600` permissions in hosted Linux tests.
 - [x] Publish and configure the private GitHub repository, then verify all hosted Windows/Linux/security jobs.
+- [x] Add bounded application-owned operation admission, cancellation, cleanup coordination, and shutdown tests.

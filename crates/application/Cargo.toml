@@ -1,0 +1,7 @@
+[package]
+name = "dev-recall-application"
+version = "0.1.0"
+description = "Bounded application lifecycle coordination for Dev Recall"
+edition.workspace = true
+rust-version.workspace = true
+publish = false

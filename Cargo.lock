@@ -605,12 +605,17 @@ dependencies = [
 name = "dev-recall"
 version = "0.1.0"
 dependencies = [
+ "dev-recall-application",
  "dev-recall-observability",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
 ]
+
+[[package]]
+name = "dev-recall-application"
+version = "0.1.0"
 
 [[package]]
 name = "dev-recall-observability"

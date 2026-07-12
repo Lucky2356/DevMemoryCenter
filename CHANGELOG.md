@@ -18,3 +18,4 @@ All notable changes will be documented here. The project has no release yet.
 - Added privacy-safe structured local logging with closed event fields, bounded rotation, retention, private Unix permissions, and explicit clearing.
 - Added bounded fail-closed repository/history secret scanning, a full-history CI gate, and GitHub contribution/security metadata.
 - Corrected Linux observability test fixtures to retain private file permissions during retention tests.
+- Added application-owned background-operation admission, cancellation, cleanup coordination, and bounded desktop shutdown.

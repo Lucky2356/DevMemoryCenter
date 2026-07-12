@@ -34,6 +34,8 @@ The `dev-recall-persistence` crate implements the first SQLite boundary with SQL
 
 The `dev-recall-observability` crate provides bounded local JSON-lines logging without a production dependency. Its event API uses closed enums and numeric values only, excluding arbitrary commands, notes, paths, headers, credentials, and error text by construction. The Tauri composition root owns the logger. Before onboarding consent it creates only an empty application-data-scoped log and performs retention cleanup; no event is emitted. Defaults are a 1 MiB active file, five archives, and seven-day retention, with bounded configurable limits and explicit clearing.
 
+The `dev-recall-application` crate provides the application-owned lifecycle boundary for future long-running work without spawning work itself. At most four operations are admitted by the desktop composition root, operation identifiers are nonzero and unique while active, and each permit exposes a scoped cancellation token. Starting shutdown permanently closes admission, signals every active permit, and waits through a condition variable for at most the caller-supplied duration. The Tauri exit path uses a five-second bound. A timed-out operation remains visible to the owner and may complete cleanup; dropping the manager also signals cancellation. Concrete executors must retain and join their own task handles and must not detach work.
+
 The frontend never receives unrestricted filesystem, database, environment, shell, or process access. Rust validates every request and returns typed, sanitized errors. Domain and application crates remain independent of Tauri.
 
 ## Proposed repository structure
@@ -88,6 +90,8 @@ Raw terminal commands must never be logged, persisted to temporary files, includ
 ## Background work
 
 Long operations have one owner, bounded queues and concurrency, progress, cancellation, explicit shutdown, and recoverable checkpoints. No detached tasks or high-frequency polling are allowed.
+
+The current lifecycle coordinator covers admission, identity, cancellation, cleanup notification, and bounded shutdown only. Progress, queues, checkpoints, and task executors belong to the individual long-running feature that requires them and are not fabricated in Phase 1.
 
 ## Localization
 

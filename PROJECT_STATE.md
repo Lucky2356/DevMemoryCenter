@@ -2,15 +2,15 @@
 
 ## Current phase
 
-Phase 1 — Application foundation.
+Phase 2 — Local projects. Phase 1 application foundation is complete.
 
 ## Last completed task
 
-Corrected Unix observability archive fixtures to preserve the logger's fail-closed private-file invariant in hosted Linux tests.
+Added application-owned background-operation admission, cancellation, cleanup coordination, and bounded shutdown.
 
 ## Work in progress
 
-None. The private GitHub repository is published and the follow-up hosted CI run passed repository security, dependency security, Ubuntu quality/build, and Windows quality/build jobs.
+None. Phase 1 is complete and the first Phase 2 task is ready.
 
 ## Completed
 
@@ -59,11 +59,14 @@ None. The private GitHub repository is published and the follow-up hosted CI run
 - Added a minimal-permission full-history CI job plus CODEOWNERS, structured non-sensitive issue forms, a security-focused pull-request checklist, and controlled weekly Dependabot configuration.
 - Corrected expired/oversized/excess archive test fixtures to create Unix files with `0600`, matching the production logger's fail-closed permission policy without weakening it.
 - Published `main` to the owner repository with a production-oriented description, scoped topics, issue/project support, squash-only merges, branch deletion after merge, security/dependency alerts, CODEOWNERS, labels, issue forms, and pull-request guidance.
+- Added `dev-recall-application`, a standard-library-only lifecycle coordinator with a default four-operation limit, nonzero unique operation IDs, scoped atomic cancellation, condition-variable cleanup notification, and permanent admission closure during shutdown.
+- Connected the lifecycle manager to Tauri application state and invoked cancellation plus a bounded five-second wait on `ExitRequested`; no production background operation is started yet.
 
 ## Tests passed
 
 - `npm run test`: 4 repository-security tests and 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
-- `cargo test --workspace --all-features`: 25 Rust unit tests passed; doc tests passed.
+- `cargo test --workspace --all-features`: 30 Rust unit tests passed; doc tests passed.
+- Focused application lifecycle tests: 5 tests passed for invalid limits/IDs, duplicate and capacity rejection, scoped cancellation, cooperative shutdown, bounded timeout/retry, and manager-drop cancellation.
 - GitHub Actions run `29167499295` passed the full-history repository-security job, dependency audits, Ubuntu 24.04 quality/tests/Tauri build, and Windows 2025 quality/tests/Tauri build.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
@@ -75,6 +78,7 @@ None. The private GitHub repository is published and the follow-up hosted CI run
 ## Checks not run
 
 - Representative packaged permission behavior still requires installer-level Windows/Linux release testing; current hosted debug builds are not installer verification.
+- Hosted Windows/Linux CI was not run for this local commit because the current autonomous-run instruction forbids push; local Windows checks and debug build passed.
 
 ## Security checks passed
 
@@ -99,6 +103,7 @@ None. The private GitHub repository is published and the follow-up hosted CI run
 - Observability regression tests verify fixed-schema valid JSON, no arbitrary string context surface, bounded metrics/files/archives, serialized concurrent writes, startup retention, oversized/excess cleanup, explicit clearing, and unsafe path rejection.
 - The desktop composition root emits no log event before onboarding consent; current startup creates only an empty local log file and performs bounded retention maintenance.
 - The observability crate adds no production dependency, network access, shell/process capability, background thread, unbounded queue, or raw error logging.
+- Lifecycle regression tests verify bounded admission, permanent shutdown admission closure, cancellation of every active permit, condition-variable cleanup waiting, timeout reporting, and drop-time cancellation without production task spawning.
 - `npm run security:secrets` passed over the current repository and every blob reachable from local refs without printing candidate values or paths.
 - Secret-scanner regression tests verify historical detection after working-tree deletion and fail-closed handling when configured limits are exceeded.
 - CI uses a full-history checkout only for the isolated repository-security job, keeps `contents: read`, and persists no checkout credentials.
@@ -111,6 +116,7 @@ None. The private GitHub repository is published and the follow-up hosted CI run
 - The persistence crate is not linked into the desktop package, so it adds no current desktop runtime threads or binary payload. Re-measure when the composition root begins owning a database.
 - Focused observability tests completed in approximately 0.04 seconds on Windows. The default log budget is approximately 6 MiB across one active file and five archives, with no idle polling or background worker.
 - The bounded repository and reachable-history scan completed locally in approximately 0.8 seconds for the current repository after switching historical reads to one validated Git batch operation.
+- Focused lifecycle tests completed in approximately 0.03 seconds on Windows. The coordinator has no worker thread, queue, polling loop, network access, disk I/O, or retained payload collection.
 
 ## Known issues
 
@@ -130,6 +136,7 @@ None. The private GitHub repository is published and the follow-up hosted CI run
 - Windows log permissions inherit the application-data ACL and still require representative packaged permission verification; Unix creation and fail-closed permission checks are covered by code/tests.
 - Repository secret detection is heuristic and cannot prove absence of unknown, encoded, fragmented, or unrecognized credential formats; GitHub push protection is configured separately when supported.
 - Scanner limits intentionally fail closed as history grows and must be reviewed rather than bypassed if the repository approaches them.
+- The lifecycle coordinator intentionally does not own a concrete async executor yet; every future long-running feature must retain and join its task handles, add progress/checkpoint semantics where required, and test forced shutdown at that feature boundary.
 
 ## Security findings
 
@@ -143,11 +150,11 @@ The remaining decision is documented in `NEEDS_USER_INPUT.md`. Owner-authorized 
 
 ## Next task
 
-Add application-owned background-operation lifecycle and shutdown tests.
+Add the `Project` domain entity and validation tests.
 
 ## Last stable commit
 
-`06b17df` (`test: preserve private Unix log fixtures`) is the stable baseline preceding this documentation sync.
+`c561f42` (`docs: record hosted repository validation`) is the stable baseline preceding this task.
 
 ## Commands to verify
 
