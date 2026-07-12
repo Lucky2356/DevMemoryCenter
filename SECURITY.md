@@ -10,6 +10,7 @@ The current desktop foundation collects and persists no user data. It exposes on
 
 - Treat paths, history, Git metadata, imports, database rows, and UI text as untrusted.
 - Validate type, length, format, scope, canonical path, and symlink behavior before access.
+- Project-directory validation is isolated in `dev-recall-platform`: external UNC/verbatim/device paths, reserved Windows names, alternate data streams, traversal, invalid Unicode, oversized paths, symlink components, and Linux virtual-filesystem roots fail closed. Descendant resolution accepts only existing relative paths beneath the approved canonical root.
 - Redact terminal input before domain processing or persistence; never create raw-command storage.
 - Render untrusted values as text; forbid `dangerouslySetInnerHTML`, `eval`, remote scripts, and unsafe URL schemes.
 - Use narrow typed IPC commands with sanitized error codes and explicit request limits.

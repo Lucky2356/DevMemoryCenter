@@ -38,6 +38,8 @@ The `dev-recall-application` crate provides the application-owned lifecycle boun
 
 The `dev-recall-domain` crate contains the first framework-independent entity. `Project` uses distinct UUID-compatible project and owner identifiers, bounded display/description text, a closed project-type vocabulary, ordered nonnegative millisecond timestamps limited to SQLite's signed integer range, explicit archive state, and per-source privacy consent that defaults to disabled. It retains root and canonical path placeholders only after non-empty domain validation; platform length, absolute-path, canonicalization, traversal, special-path, and symlink checks belong to the next platform boundary and are not claimed here.
 
+The `dev-recall-platform` crate implements that project-directory trust boundary without scanning contents. It accepts only existing absolute Unicode directories within a 4,096-unit platform limit, rejects lexical traversal and symlink/reparse components before and after canonicalization, rejects Windows UNC/verbatim/device/reserved/alternate-stream paths supplied by callers, and rejects Linux `/dev`, `/proc`, and `/sys` roots. Windows verbatim disk paths are accepted only when produced internally by `std::fs::canonicalize`. Existing descendants are resolved from relative paths and must remain beneath the approved canonical project root.
+
 The frontend never receives unrestricted filesystem, database, environment, shell, or process access. Rust validates every request and returns typed, sanitized errors. Domain and application crates remain independent of Tauri.
 
 ## Proposed repository structure

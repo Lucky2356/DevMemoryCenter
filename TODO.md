@@ -6,7 +6,7 @@ Phase 2 — Local projects
 
 ### In progress
 
-None. The first Phase 2 domain task is complete; platform path validation is ready.
+None. Project path validation is complete; the consent-aware project record boundary is ready.
 
 ### Ready
 
@@ -22,7 +22,7 @@ None. The first Phase 2 domain task is complete; platform path validation is rea
 #### Phase 2 — Local projects
 
 - [x] Add the `Project` domain entity and validation tests.
-- [ ] Implement platform path validation, canonicalization, special-path, traversal, and symlink tests.
+- [x] Implement platform path validation, canonicalization, special-path, traversal, and symlink tests.
 - [ ] Add a narrow, consent-aware project record command and repository.
 - [ ] Add bounded manifest detection without recursive source scanning.
 - [ ] Add read-only Git repository, branch, commit, and dirty-state inspection.
@@ -117,3 +117,4 @@ None. The first Phase 2 domain task is complete; platform path validation is rea
 - [x] Publish and configure the private GitHub repository, then verify all hosted Windows/Linux/security jobs.
 - [x] Add bounded application-owned operation admission, cancellation, cleanup coordination, and shutdown tests.
 - [x] Add the bounded `Project` domain entity, UUID-compatible ownership, privacy defaults, and validation tests.
+- [x] Add bounded platform project-directory validation, canonical root containment, and adversarial path tests.

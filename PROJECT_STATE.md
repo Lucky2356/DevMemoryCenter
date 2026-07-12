@@ -6,11 +6,11 @@ Phase 2 — Local projects. Phase 1 application foundation is complete.
 
 ## Last completed task
 
-Added the framework-independent `Project` domain entity and validation tests.
+Added bounded platform project-directory validation and adversarial path tests.
 
 ## Work in progress
 
-None. The next Phase 2 task is platform path validation and canonicalization.
+None. The next Phase 2 task is a narrow consent-aware project record command and repository.
 
 ## Completed
 
@@ -63,13 +63,16 @@ None. The next Phase 2 task is platform path validation and canonicalization.
 - Connected the lifecycle manager to Tauri application state and invoked cancellation plus a bounded five-second wait on `ExitRequested`; no production background operation is started yet.
 - Added `dev-recall-domain` with distinct validated UUID-compatible project/owner IDs, bounded and normalized display/description text, a closed project-type enum, ordered timestamps, explicit archive state, and source consent disabled by default.
 - Added non-empty root/canonical path placeholders without claiming platform path safety; platform length, traversal, special-path, canonicalization, and symlink enforcement remain the next isolated task.
+- Added `dev-recall-platform` with a 4,096-unit limit, absolute/existing-directory checks, invalid-Unicode and lexical-traversal rejection, component-level symlink inspection, canonicalization, and existing-descendant containment beneath the approved root.
+- Added Windows rejection for external UNC, verbatim, device namespace, reserved device names, trailing-dot/space, and alternate-data-stream paths; internally canonicalized verbatim disk paths remain supported. Linux rejects `/dev`, `/proc`, and `/sys` project roots.
 
 ## Tests passed
 
 - `npm run test`: 4 repository-security tests and 30 localization, application-shell, IPC validation, and error-sanitization tests passed.
-- `cargo test --workspace --all-features`: 41 Rust unit tests passed; doc tests passed.
+- `cargo test --workspace --all-features`: 48 Rust unit tests passed locally on Windows; doc tests passed.
 - Focused application lifecycle tests: 5 tests passed for invalid limits/IDs, duplicate and capacity rejection, scoped cancellation, cooperative shutdown, bounded timeout/retry, and manager-drop cancellation.
 - Focused `Project` domain tests: 11 tests passed for valid construction, UUID shape, UTF-8 byte limits, control/bidi rejection, safe plain-text preservation, description normalization, path placeholders, timestamp/archive ordering/range, and privacy defaults.
+- Focused platform tests: 7 Windows tests passed for canonical directory acceptance, relative/traversal/missing/file rejection, path length, root containment, invalid UTF-16, and Windows special/device path policy. The symlink test is present but its fixture could not be created locally without Windows symlink privilege.
 - GitHub Actions run `29167499295` passed the full-history repository-security job, dependency audits, Ubuntu 24.04 quality/tests/Tauri build, and Windows 2025 quality/tests/Tauri build.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
@@ -81,7 +84,8 @@ None. The next Phase 2 task is platform path validation and canonicalization.
 ## Checks not run
 
 - Representative packaged permission behavior still requires installer-level Windows/Linux release testing; current hosted debug builds are not installer verification.
-- Hosted Windows/Linux CI was not run for this local commit because the current autonomous-run instruction forbids push; local Windows checks and debug build passed.
+- The current path-boundary commit has not yet been exercised by hosted Windows/Linux CI; owner-authorized push and CI verification follow this commit.
+- Windows symlink fixture creation was unavailable locally (`ERROR_PRIVILEGE_NOT_HELD`); the same production rejection path is covered by the Unix symlink fixture and must pass hosted Linux CI.
 
 ## Security checks passed
 
@@ -108,6 +112,7 @@ None. The next Phase 2 task is platform path validation and canonicalization.
 - The observability crate adds no production dependency, network access, shell/process capability, background thread, unbounded queue, or raw error logging.
 - Lifecycle regression tests verify bounded admission, permanent shutdown admission closure, cancellation of every active permit, condition-variable cleanup waiting, timeout reporting, and drop-time cancellation without production task spawning.
 - Project validation rejects nil/non-RFC/versionless IDs, oversized text, control/bidi characters, invalid timestamp/archive ordering, and empty path placeholders; privacy consent is disabled by default.
+- Path regression tests cover traversal, root escape attempts, missing/disappeared targets, files used as project roots, platform length limits, invalid Unicode, Windows special/device forms, and symlink roots/descendants where the test platform permits fixture creation.
 - `npm run security:secrets` passed over the current repository and every blob reachable from local refs without printing candidate values or paths.
 - Secret-scanner regression tests verify historical detection after working-tree deletion and fail-closed handling when configured limits are exceeded.
 - CI uses a full-history checkout only for the isolated repository-security job, keeps `contents: read`, and persists no checkout credentials.
@@ -122,6 +127,7 @@ None. The next Phase 2 task is platform path validation and canonicalization.
 - The bounded repository and reachable-history scan completed locally in approximately 0.8 seconds for the current repository after switching historical reads to one validated Git batch operation.
 - Focused lifecycle tests completed in approximately 0.03 seconds on Windows. The coordinator has no worker thread, queue, polling loop, network access, disk I/O, or retained payload collection.
 - Focused domain tests completed in approximately 0.00 seconds on Windows. The crate adds no dependency, I/O, background work, network access, global state, or unbounded collection.
+- Focused platform tests completed in approximately 0.00 seconds on Windows. Validation performs a bounded number of metadata operations proportional only to path component count and does not enumerate directory contents.
 
 ## Known issues
 
@@ -142,7 +148,7 @@ None. The next Phase 2 task is platform path validation and canonicalization.
 - Repository secret detection is heuristic and cannot prove absence of unknown, encoded, fragmented, or unrecognized credential formats; GitHub push protection is configured separately when supported.
 - Scanner limits intentionally fail closed as history grows and must be reviewed rather than bypassed if the repository approaches them.
 - The lifecycle coordinator intentionally does not own a concrete async executor yet; every future long-running feature must retain and join its task handles, add progress/checkpoint semantics where required, and test forced shutdown at that feature boundary.
-- `ProjectPaths` currently enforces only non-empty placeholders; no filesystem access may use them until the next platform-validation task adds absolute-path, length, canonicalization, traversal, special-path, and symlink enforcement.
+- Same-user TOCTOU cannot be eliminated by path validation alone; every later filesystem adapter must resolve descendants through the approved canonical root, repeat checks near use, handle disappearance, and avoid destructive project-file operations.
 
 ## Security findings
 
@@ -156,11 +162,11 @@ The remaining decision is documented in `NEEDS_USER_INPUT.md`. Owner-authorized 
 
 ## Next task
 
-Implement platform path validation, canonicalization, special-path, traversal, and symlink tests.
+Add a narrow, consent-aware project record command and repository.
 
 ## Last stable commit
 
-`b3df1e6` (`feat: add bounded background operation lifecycle`) is the stable baseline preceding this task.
+`d829a96` (`feat: add validated project domain entity`) is the stable baseline preceding this task.
 
 ## Commands to verify
 
