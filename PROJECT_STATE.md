@@ -74,6 +74,7 @@ None. The next Phase 2 task is a narrow consent-aware project record command and
 - Focused `Project` domain tests: 11 tests passed for valid construction, UUID shape, UTF-8 byte limits, control/bidi rejection, safe plain-text preservation, description normalization, path placeholders, timestamp/archive ordering/range, and privacy defaults.
 - Focused platform tests: 7 Windows tests passed for canonical directory acceptance, relative/traversal/missing/file rejection, path length, root containment, invalid UTF-16, and Windows special/device path policy. The symlink test is present but its fixture could not be created locally without Windows symlink privilege.
 - GitHub Actions run `29167499295` passed the full-history repository-security job, dependency audits, Ubuntu 24.04 quality/tests/Tauri build, and Windows 2025 quality/tests/Tauri build.
+- GitHub Actions run `29181847238` passed the current path boundary on Ubuntu 24.04 and Windows 2025, including strict lint, platform-specific tests, workspace checks, Tauri builds, dependency security, and full-history secret scanning.
 - `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm run build` passed.
 - `cargo fmt --all -- --check`, strict workspace Clippy, and `cargo check --workspace --all-targets` passed.
 - `npm run tauri -- info` and the Windows Tauri debug build passed.
@@ -84,8 +85,7 @@ None. The next Phase 2 task is a narrow consent-aware project record command and
 ## Checks not run
 
 - Representative packaged permission behavior still requires installer-level Windows/Linux release testing; current hosted debug builds are not installer verification.
-- The current path-boundary commit has not yet been exercised by hosted Windows/Linux CI; owner-authorized push and CI verification follow this commit.
-- Windows symlink fixture creation was unavailable locally (`ERROR_PRIVILEGE_NOT_HELD`); the same production rejection path is covered by the Unix symlink fixture and must pass hosted Linux CI.
+- Windows symlink fixture creation was unavailable locally (`ERROR_PRIVILEGE_NOT_HELD`); hosted Linux CI exercised and passed the root and nested symlink fixtures. A privileged Windows symlink fixture remains part of representative packaged testing.
 
 ## Security checks passed
 
@@ -166,7 +166,7 @@ Add a narrow, consent-aware project record command and repository.
 
 ## Last stable commit
 
-`d829a96` (`feat: add validated project domain entity`) is the stable baseline preceding this task.
+`c869019` (`security: validate project directory boundaries`) is the current verified stable baseline.
 
 ## Commands to verify
 
